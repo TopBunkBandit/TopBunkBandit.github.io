@@ -1,19 +1,22 @@
-// Project Title
-// Your Name
-// Date
+// the thingy
+// James Mitchell
+// 25/9/2024
 //
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
 
-let speed = 1
-let radius = 25
-let x = 200;
+let speed = 1;
+let radius = 25;
 let y = 200;
-let borderUpY = false
-let borderDownY = false
-let borderRightX = false
-let borderLeftX = false
+let x = 200;
+let borderUpY = false;
+let borderDownY = false;
+let borderRightX = false;
+let borderLeftX = false;
+let playerPosition = (x,y);
+let randX = random(width - radius/2);
+let randY = random(height - radius/2);
 
 function setup() {
   createCanvas(400, 400);
@@ -22,15 +25,13 @@ function setup() {
 
 function draw() {
   background(220);
-  showCharacter()
+  showCharacter();
 }
 
 function showCharacter(){
-  checkForBorderX()
-  checkForBorderY()
-  moveTime()
-  circle(x, y, radius)
-  
+  checkForBorderX();
+  checkForBorderY();
+  moveTime();
   
 }
 
@@ -51,7 +52,10 @@ function moveTime(){
   if (keyIsDown(68) && borderRightX === false){
     x += speed;
   } 
+  fill("purple");
+  circle(x, y, radius);
 }
+
 
 function checkForBorderX(){
   if (x < radius/2){
@@ -61,7 +65,7 @@ function checkForBorderX(){
     borderLeftX = false;
   }
   
-  if (y > height - radius/2){
+  if (x > height - radius/2){
     borderRightX = true;
   }  
   else{
@@ -87,5 +91,11 @@ function checkForBorderY(){
 
 
 function mousePressed() {
-
+  if (mouseX <= x + 10 && mouseX >= x - 10){
+    radius = 30;
+    if (mouseIsPressed);
+    x = randX;
+    y = randY;
+    
+  }
 }
