@@ -3,7 +3,7 @@
 // 25/9/2024
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// - made a basic addition of allowing the mouse
 
 
 let speed = 1;
@@ -15,8 +15,7 @@ let borderDownY = false;
 let borderRightX = false;
 let borderLeftX = false;
 let playerPosition = (x,y);
-let randX = random(width - radius/2);
-let randY = random(height - radius/2);
+let changeColor = false;
 
 function setup() {
   createCanvas(400, 400);
@@ -52,8 +51,14 @@ function moveTime(){
   if (keyIsDown(68) && borderRightX === false){
     x += speed;
   } 
-  fill("purple");
-  circle(x, y, radius);
+  if (!changeColor){
+    circle(x, y, radius*2);
+  }
+  else{
+    fill(random(255), random(255), random(255));
+    circle(x, y, radius*2);
+    changeColor = false;
+  }
 }
 
 
@@ -90,12 +95,26 @@ function checkForBorderY(){
 }
 
 
-function mousePressed() {
-  if (mouseX <= x + 10 && mouseX >= x - 10){
-    radius = 30;
-    if (mouseIsPressed);
-    x = randX;
-    y = randY;
-    
+// function mousePressed() {
+//   if (mouseX <= x + 10 && mouseX >= x - 10){
+//     radius = random(10, 75);
+
+//   }
+// }
+
+
+function mouseWheel(event) {
+  if (event.delta < 0 && radius <= 200){
+    radius += 1;
+  }
+  else if (event.delta > 0 && radius >= 0){
+    radius -= 1;
+
   }
 }
+
+function doubleClicked(){
+  changeColor = !changeColor;
+
+}
+
