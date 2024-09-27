@@ -11,8 +11,8 @@ let radius = 25;
 let enemyRadius = 25;
 let y = 200;
 let x = 200;
-let eX = 200;
-let eY = 200;
+let eX = radius;
+let eY = radiussa;
 let dx = 4;
 let dy = 2.5;
 let borderUpY = false;
@@ -32,7 +32,7 @@ function draw() {
   background("lightblue");
   showCharacter();
   enemyMovement();
-  // checkForCollision();
+  checkForCollision();
 }
 
 function showCharacter(){
@@ -78,7 +78,7 @@ function checkForBorderX(){
     borderLeftX = false;
   }
   
-  if (x > width - radius){
+  if (x > width - radius){ds
     borderRightX = true;
   }  
   else{
@@ -139,33 +139,30 @@ function moveEnemy(){
 
 }
 
-// function bounceEnemy(){
-//   if (eX >= width - radius || eX <= 0 + radius) {
-//     dx = dx * -1;
-//   }
-  
-//   if (eY >= height - radius || eY <= 0 + radius) {
-//     dy = dy * -1;
-//   }
-// }
-
 function bounceEnemy(){
-  if (eX >= random(0, 400) && millis() >= lastTimeBounced ) {
+  if (eX >= width - radius || eX <= 0 + radius) {
     dx = dx * -1;
-    lastTimeBounced = millis() + 500 
   }
   
-  if (eY >= random(0, 400) && millis() >= lastTimeBounced) {
+  if (eY >= height - radius || eY <= 0 + radius) {
     dy = dy * -1;
-    lastTimeBounced = millis() + 500 
   }
 }
 
+// function bounceEnemy(){
+//   if (eX >= random(0, 400) && millis() >= lastTimeBounced ) {
+//     dx = dx * -1;
+//     lastTimeBounced = millis() + 500 
+//   }
+  
+//   if (eY >= random(0, 400) && millis() >= lastTimeBounced) {
+//     dy = dy * -1;
+//     lastTimeBounced = millis() + 500 
+//   }
+// }
+
 function displayEnemy(){
-  noStroke();
-  if (changePlayerColor)
-    fill(255)
-    circle(eX, eY, radius*2);
+  circle(eX, eY, radius*2);
   
 }
 
@@ -200,3 +197,11 @@ function checkForBorderY(){
     borderDownY = false;
   }
 }
+
+function  checkForCollision(){
+  if(dist(x, y, eX, eY) < 10){
+    speed = 100
+  }
+
+}
+
