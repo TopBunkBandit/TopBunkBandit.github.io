@@ -12,7 +12,7 @@ let enemyRadius = 25;
 let y = 200;
 let x = 200;
 let eX = radius;
-let eY = radiussa;
+let eY = radius;
 let dx = 4;
 let dy = 2.5;
 let borderUpY = false;
@@ -22,6 +22,7 @@ let borderLeftX = false;
 let playerPosition = (x,y);
 let changePlayerColor = false;
 let lastTimeBounced = 0;
+let gameOver = false;
 
 function setup() {
   createCanvas(400, 400);
@@ -39,6 +40,7 @@ function showCharacter(){
   checkForBorderX();
   checkForBorderY();
   moveTime();
+  isGameOver();
   
 }
 
@@ -122,7 +124,7 @@ function mouseWheel(event) {
 }
 
 function doubleClicked(){
-  changePlayerColor = !changePlayerColor;
+  gameOver = false;
 
 }
 
@@ -139,31 +141,36 @@ function moveEnemy(){
 
 }
 
-function bounceEnemy(){
-  if (eX >= width - radius || eX <= 0 + radius) {
-    dx = dx * -1;
-  }
-  
-  if (eY >= height - radius || eY <= 0 + radius) {
-    dy = dy * -1;
-  }
-}
-
 // function bounceEnemy(){
-//   if (eX >= random(0, 400) && millis() >= lastTimeBounced ) {
+//   if (eX >= width - radius || eX <= 0 + radius) {
 //     dx = dx * -1;
-//     lastTimeBounced = millis() + 500 
 //   }
   
-//   if (eY >= random(0, 400) && millis() >= lastTimeBounced) {
+//   if (eY >= height - radius || eY <= 0 + radius) {
 //     dy = dy * -1;
-//     lastTimeBounced = millis() + 500 
 //   }
 // }
 
-function displayEnemy(){
-  circle(eX, eY, radius*2);
+function bounceEnemy(){
+  if (eX >= random(0, 400) && millis() >= lastTimeBounced ) {
+    dx = dx * -1;
+    lastTimeBounced = millis() + 500 
+  }
   
+  if (eY >= random(0, 400) && millis() >= lastTimeBounced) {
+    dy = dy * -1;
+    lastTimeBounced = millis() + 500 
+  }
+}
+
+
+function displayEnemy(){
+  if (gameOver === false){
+    circle(eX, eY, radius*2);
+  }
+  else{
+    fill(255);
+  }
 }
 
 function checkForBorderX(){
@@ -199,9 +206,23 @@ function checkForBorderY(){
 }
 
 function  checkForCollision(){
-  if(dist(x, y, eX, eY) < 10){
-    speed = 100
+  if (x + radius > eX - radius && x - radius < eX + radius && y + radius > eY - radius && y - radius < eY + radius) {
+    gameOver = true;
   }
 
 }
 
+function isGameOver(){
+  if (gameOver === true){
+    fill("black")
+    rect(0, 0, width, height);
+    fill("white")
+    stroke(0);
+    textSize(20);
+    text('Game Over Noob', width/2 - 100, height/2);
+    fill(255);
+
+  }
+
+
+}
