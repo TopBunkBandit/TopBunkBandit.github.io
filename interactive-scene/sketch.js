@@ -1,11 +1,12 @@
-// the thingy
+// dodge the ball(?)
 // James Mitchell
 // 25/9/2024
-// a little dodging game(?) avoid the other ball if you want, doesnt really matter
+// a little dodging game(?) avoid the other ball if you want, 
 // controls are WASD for movement, double click restarts the game and scroll wheel changes your speed
 // Extra for Experts:
 // - mousewheel changes speed, changing the shape of the window will automatically reset the game as to prevent any issues with the borders, dunno if that counts for anything
-
+// NOTE: this game will start out slow and progressively get faster, as such playing with a large window will cause the game to feel slower for longer and with a smaller window 
+//it will feel faster. up to the player to decide if they are patient enough to play full screen or windowed
 
 let speed = 1;
 let radius = 25;
@@ -36,13 +37,13 @@ function setup() {
 
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  eX = radius + 5
-  eY = radius + 5
-  speed = 1
-  dx = 4
-  dy = 2.5
-  x = windowWidth/2 - radius
-  y = windowHeight/2 - radius
+  eX = radius + 5;
+  eY = radius + 5;
+  speed = 1;
+  dx = 4;
+  dy = 2.5;
+  x = windowWidth/2 - radius;
+  y = windowHeight/2 - radius;
 }
 
 function draw() {
@@ -132,6 +133,8 @@ function doubleClicked(){
   eX = radius + 5
   eY = radius + 5
   speed = 1
+  dx = 4;
+  dy = 2.5;sa
   x = windowWidth/2 - radius
   y = windowHeight/2 - radius
 
