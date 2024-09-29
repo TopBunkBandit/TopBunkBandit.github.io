@@ -39,6 +39,8 @@ function windowResized() {
   eX = radius + 5
   eY = radius + 5
   speed = 1
+  dx = 4
+  dy = 2.5
   x = windowWidth/2 - radius
   y = windowHeight/2 - radius
 }
@@ -151,41 +153,13 @@ function moveEnemy(){
 function bounceEnemy(){
   if (eX >= width - radius || eX <= 0 + radius) {
     rotate(random(0, 90))
-    dx = dx * random(-2, -0.5);
+    dx = dx * random(-1.5, -0.75);
   }
   
   if (eY >= height - radius || eY <= 0 + radius) {
-    dy = dy * random(-2, -0.5);
+    dy = dy * random(-1.5, -0.75);
   }
 }
-
-// function bounceEnemy(){
-//   if (!borderEnemyLeftX && !borderEnemyRightX){
-//     if (millis() >= lastTimeBounced ) {
-//       dx = dx * -1;
-//       lastTimeBounced = millis() + random(1000, 5000) 
-//     }
-//   else{
-//     dx = dx * -1;
-//     for (let i = 0; i <= 5; i++) {
-//      dx += 1 
-//     }
-//     i = 0
-//     }
-// }
-//   if (!borderEnemyDownY && !borderEnemyUpY)
-//     if (millis() >= lastTimeBounced) {
-//       dy = dy * -1;
-//       lastTimeBounced = millis() + random(1000, 5000)  
-//     }
-//     else{
-//       dy = dy * -1;
-//       for (let i = 0; i <= 5; i++) {
-//        dy += 1 
-//       }
-//     }
-// }
-
 
 function displayEnemy(){
   if (gameOver === false){
