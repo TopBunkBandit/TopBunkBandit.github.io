@@ -25,11 +25,8 @@ let borderEnemyUpY = false;
 let borderEnemyDownY = false;
 let borderEnemyRightX = false;
 let borderEnemyLeftX = false;
-let playerPosition = (x,y);
-let changePlayerColor = false;
 let lastTimeBounced = 0;
 let gameOver = false;
-let i = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -78,7 +75,7 @@ function moveTime(){
   if (keyIsDown(68) && borderRightX === false){
     x += speed;
   } 
-  fill('green')
+  fill("green");
   circle(x, y, radius*2);
 
 }
@@ -130,13 +127,13 @@ function mouseWheel(event) {
 
 function doubleClicked(){
   gameOver = false;
-  eX = radius + 5
-  eY = radius + 5
-  speed = 1
+  eX = radius + 5;
+  eY = radius + 5;
+  speed = 1;
   dx = 4;
-  dy = 2.5;sa
-  x = windowWidth/2 - radius
-  y = windowHeight/2 - radius
+  dy = 2.5;
+  x = windowWidth/2 - radius;
+  y = windowHeight/2 - radius;
 
 }
 
@@ -155,7 +152,7 @@ function moveEnemy(){
 
 function bounceEnemy(){
   if (eX >= width - radius || eX <= 0 + radius) {
-    rotate(random(0, 90))
+    rotate(random(0, 90));
     dx = dx * random(-1.5, -0.75);
   }
   
@@ -166,7 +163,7 @@ function bounceEnemy(){
 
 function displayEnemy(){
   if (gameOver === false){
-    fill('redd')
+    fill("red");
     circle(eX, eY, radius*2);
   }
   else{
@@ -215,12 +212,13 @@ function  checkForCollision(){
 
 function isGameOver(){
   if (gameOver === true){
-    fill("black")
+    fill("black");
     rect(0, 0, width, height);
-    fill("white")
+    fill("white");
     stroke(0);
     textSize(20);
-    text('Game Over Noob', width/2 - 100, height/2);
+    text("Game Over Noob", width/2 - 100, height/2);
+    text("Double Click Left Mouse To Retry", width/2 - 100, height/2 + 30);
     fill(255);
 
   }
