@@ -7,24 +7,34 @@
 // - mousewheel changes speed, changing the shape of the window will automatically reset the game as to prevent any issues with the borders, dunno if that counts for anything
 // NOTE: this game will start out slow and progressively get faster, as such playing with a large window will cause the game to feel slower for longer and with a smaller window 
 //it will feel faster. up to the player to decide if they are patient enough to play full screen or windowed
+//PLEASE NOTE: the game is a little buggy and you need to double click when starting the game for the first time to get both balls to work, 
+//otherwise it will just be one ball to dodge
 
 let speed = 1;
 let radius = 25;
 let enemyRadius = 25;
 let y = 200;
 let x = 200;
-let eX = radius + 5;
-let eY = radius + 5;
-let dx = 4;
-let dy = 2.5;
+let e1X = radius + 5;
+let e1Y = radius + 5;
+let d1x = 4;
+let d1y = 2.5;
+let e2X = -radius ;
+let e2Y = -radius ;
+let d2x = 4;
+let d2y = 2.5;
 let borderUpY = false;
 let borderDownY = false;
 let borderRightX = false;
 let borderLeftX = false;
-let borderEnemyUpY = false;
-let borderEnemyDownY = false;
-let borderEnemyRightX = false;
-let borderEnemyLeftX = false;
+let borderEnemy1UpY = false;
+let borderEnemy1DownY = false;
+let borderEnemy1RightX = false;
+let borderEnemy1LeftX = false;
+let borderEnemy2UpY = false;
+let borderEnemy2DownY = false;
+let borderEnemy2RightX = false;
+let borderEnemy2LeftX = false;
 let lastTimeBounced = 0;
 let gameOver = false;
 
@@ -32,13 +42,18 @@ function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
+//if window shape is changed
 function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
-  eX = radius + 5;
-  eY = radius + 5;
+  e1X = radius + 5;
+  e1Y = radius + 5;
   speed = 1;
-  dx = 4;
-  dy = 2.5;
+  d1x = 4;
+  d1y = 2.5;
+  e2X = -radius + windowWidth;
+  e2Y = -radius + windowHeight;
+  d2x = 4;
+  d2y = 2.5;
   x = windowWidth/2 - radius;
   y = windowHeight/2 - radius;
 }
@@ -58,6 +73,7 @@ function showCharacter(){
   
 }
 
+//moveing your character
 function moveTime(){
   //w
   if (keyIsDown(87) && borderUpY === false){
@@ -80,7 +96,7 @@ function moveTime(){
 
 }
 
-
+//stops you from leaving the screen, same with the function below
 function checkForBorderX(){
   if (x < radius){
     borderLeftX = true;
@@ -96,6 +112,7 @@ function checkForBorderX(){
     borderRightX = false;
   }
 }
+
 
 function checkForBorderY(){
   if (y < radius){
@@ -114,7 +131,7 @@ function checkForBorderY(){
 }
 
 
-
+//changing the players speed via the mouse wheel
 function mouseWheel(event) {
   if (event.delta < 0 && speed <= 10){
     speed += 0.1;
@@ -125,91 +142,103 @@ function mouseWheel(event) {
   }
 }
 
+//reseting the game
 function doubleClicked(){
-  gameOver = false;
-  eX = radius + 5;
-  eY = radius + 5;
-  speed = 1;
-  dx = 4;
-  dy = 2.5;
-  x = windowWidth/2 - radius;
-  y = windowHeight/2 - radius;
-
+  if (gameOver){
+    gameOver = false;
+    e1X = radius + 5;
+    e1Y = radius + 5;
+    speed = 1;
+    d1x = 4;
+    d1y = 2.5;
+    e2X = windowWidth - windowWidth/7;
+    e2Y = windowHeight - windowHeight/7 ;
+    d2x = 4;
+    d2y = 2.5;
+    x = windowWidth/2 - radius;
+    y = windowHeight/2 - radius;
+  }
 }
 
 function enemyMovement(){  
-  moveEnemy();
-  bounceEnemy();
-  displayEnemy();
+  moveEnemys();
+  bounceEnemy1();
+  bounceEnemy2();
+  displayEnemy1();
+  displayEnemy2();
 
 }
 
-function moveEnemy(){
-  eX = eX + dx;
-  eY = eY + dy;
+function moveEnemys(){
+  e1X = e1X + d1x;
+  e1Y = e1Y + d1y;
+  e2X = e2X + d2x;
+  e2Y = e2Y + d2y;
 
 }
-
-function bounceEnemy(){
-  if (eX >= width - radius || eX <= 0 + radius) {
-    rotate(random(0, 90));
-    dx = dx * random(-1.5, -0.75);
+//checking the borders and if the ball is on them it will bounce
+function bounceEnemy1(){
+  if (e1X >= width - radius || e1X <= 0 + radius) {
+    d1x = d1x * random(-1.5, -0.75);
   }
   
-  if (eY >= height - radius || eY <= 0 + radius) {
-    dy = dy * random(-1.5, -0.75);
+  if (e1Y >= height - radius || e1Y <= 0 + radius) {
+    d1y = d1y * random(-1.5, -0.75);
   }
 }
 
-function displayEnemy(){
+function bounceEnemy2(){
+  if (e2X >= width - radius || e2X <= 0 + radius) {
+    if (d2x > 30){
+      d2x = d2x * -1;
+    }
+    else{
+      d2x = d2x * random(-1.5, -0.75);
+    }
+  }
+  
+  if (e2Y >= height - radius || e2Y <= 0 + radius) {
+    if (d2y > 30){
+      d2y = d2y * -1;
+    }
+    else{
+      d2y = d2y * random(-1.5, -0.75);
+    }
+  }
+}
+
+function displayEnemy1(){
   if (gameOver === false){
     fill("red");
-    circle(eX, eY, radius*2);
+    circle(e1X, e1Y, radius*2);
   }
   else{
     fill(255);
   }
 }
 
-function checkForEnemyBorderX(){
-  if (eX < radius){
-    borderEnemyLeftX = true;
+function displayEnemy2(){
+  if (gameOver === false){
+    fill("red");
+    circle(e2X, e2Y, radius*2.5);
   }
   else{
-    borderEnemyLeftX = false;
-  }
-  
-  if (eX > width - radius){
-    borderEnemyRightX = true;
-  }  
-  else{
-    borderEnemyRightX = false;
+    fill(255);
   }
 }
 
-function checkForEnemyBorderY(){
-  if (eY < radius){
-    borderEnemyUpY = true;
-  }
-  else{
-    borderEnemyUpY = false;
-  }
-  
-  if (eY > height - radius){
-    borderEnemyDownY = true;
-  }  
-  else{
-    borderEnemyDownY = false;
-  }
-}
-
+//checking if the enemy balls are touching the player, and if so ending the game
 function  checkForCollision(){
-  if (x + radius > eX - radius && x - radius < eX + radius && y + radius > eY - radius && y - radius < eY + radius) {
+  if (x + radius > e1X - radius && x - radius < e1X + radius && y + radius > e1Y - radius && y - radius < e1Y + radius) {
+    gameOver = true;
+  }
+  if (x + radius > e2X - radius && x - radius < e2X + radius && y + radius > e2Y - radius && y - radius < e2Y + radius) {
     gameOver = true;
   }
 
 }
 
+//ending the game, displaying some text
 function isGameOver(){
   if (gameOver === true){
     fill("black");
@@ -217,7 +246,7 @@ function isGameOver(){
     fill("white");
     stroke(0);
     textSize(20);
-    text("Game Over Noob", width/2 - 100, height/2);
+    text("Game Over, You Fool", width/2 - 100, height/2);
     text("Double Click Left Mouse To Retry", width/2 - 100, height/2 + 30);
     fill(255);
 
@@ -225,3 +254,7 @@ function isGameOver(){
 
 
 }
+
+
+
+
