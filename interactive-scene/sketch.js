@@ -10,7 +10,7 @@
 //PLEASE NOTE: the game is a little buggy and you need to double click when starting the game for the first time to get both balls to work, 
 //otherwise it will just be one ball to dodge
 
-let speed = 1;
+let speed = 10;
 let radius = 25;
 let enemyRadius = 25;
 let y = 200;
@@ -19,8 +19,8 @@ let e1X = radius + 5;
 let e1Y = radius + 5;
 let d1x = 4;
 let d1y = 2.5;
-let e2X = -radius ;
-let e2Y = -radius ;
+let e2X = 200 ;
+let e2Y = 200 ;
 let d2x = 4;
 let d2y = 2.5;
 let borderUpY = false;
@@ -47,7 +47,7 @@ function windowResized() {
   resizeCanvas(windowWidth, windowHeight);
   e1X = radius + 5;
   e1Y = radius + 5;
-  speed = 1;
+  speed = 10;
   d1x = 4;
   d1y = 2.5;
   e2X = -radius + windowWidth;
@@ -63,6 +63,7 @@ function draw() {
   showCharacter();
   enemyMovement();
   checkForCollision();
+  
 }
 
 function showCharacter(){
@@ -133,7 +134,7 @@ function checkForBorderY(){
 
 //changing the players speed via the mouse wheel
 function mouseWheel(event) {
-  if (event.delta < 0 && speed <= 10){
+  if (event.delta < 0 && speed <= 25){
     speed += 0.1;
   }
   else if (event.delta > 0 && speed >= 0){
@@ -148,7 +149,7 @@ function doubleClicked(){
     gameOver = false;
     e1X = radius + 5;
     e1Y = radius + 5;
-    speed = 1;
+    speed = 10;
     d1x = 4;
     d1y = 2.5;
     e2X = windowWidth - windowWidth/7;
@@ -179,14 +180,23 @@ function moveEnemys(){
 //checking the borders and if the ball is on them it will bounce
 function bounceEnemy1(){
   if (e1X >= width - radius || e1X <= 0 + radius) {
-    d1x = d1x * random(-1.5, -0.75);
+    if (d1x > 30){
+      d1x = d1x * -1;
+    }
+    else{
+      d1x = d1x * random(-1.5, -0.75);
+    }
   }
   
   if (e1Y >= height - radius || e1Y <= 0 + radius) {
-    d1y = d1y * random(-1.5, -0.75);
+    if (d1y > 30){
+      d1y = d1y * -1;
+    }
+    else{
+      d1y = d1y * random(-1.5, -0.75);
+    }
   }
 }
-
 function bounceEnemy2(){
   if (e2X >= width - radius || e2X <= 0 + radius) {
     if (d2x > 30){
@@ -231,12 +241,15 @@ function displayEnemy2(){
 function  checkForCollision(){
   if (x + radius > e1X - radius && x - radius < e1X + radius && y + radius > e1Y - radius && y - radius < e1Y + radius) {
     gameOver = true;
+    
   }
   if (x + radius > e2X - radius && x - radius < e2X + radius && y + radius > e2Y - radius && y - radius < e2Y + radius) {
     gameOver = true;
+    
   }
 
 }
+
 
 //ending the game, displaying some text
 function isGameOver(){
@@ -246,8 +259,11 @@ function isGameOver(){
     fill("white");
     stroke(0);
     textSize(20);
-    text("Game Over, You Fool", width/2 - 100, height/2);
-    text("Double Click Left Mouse To Retry", width/2 - 100, height/2 + 30);
+    text("Controls:", width/2 - 100, height/2 - 20);
+    text("WASD to move, scrollwheel to change your speed", width/2 - 100, height/2 )
+    text("Game Over", width/2 - 100, height/4);
+    text("Double Click Left Mouse To Play", width/2 - 100, height/2 + 100);
+  
     fill(255);
 
   }
