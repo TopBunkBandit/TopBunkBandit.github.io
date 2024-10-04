@@ -3,6 +3,7 @@
 - [Moving Square](movingsquare)
 - [Traffic Lights](traffic-lights)
 - [Bouncing Balls](bouncing-balls) 
+- [Generative Art](art)
 
 
 ## Projects ;3
