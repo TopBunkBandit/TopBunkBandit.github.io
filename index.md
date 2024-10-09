@@ -10,3 +10,4 @@
 
 ## Projects ;3
 - [Interactive Scene](interactive-scene)
+- [Arrays and Object Notation](array-and-object-assignment)
