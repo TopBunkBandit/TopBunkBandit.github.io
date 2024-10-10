@@ -1,14 +1,18 @@
 // the thingy
 // James Mitchell
 // 9/10/24
-//basically a shooting targets game
-//dunno how to rotate anything so lets see how this goes
+//basically a shooting targets game, you hit the enemy rectangles while avoiding the friendly rectangles
+// dunno how to rotate anything so lets see how this goes
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
 
 let v0;
 let v1;
+let thePlanes = [];
+let x = 0;
+let y = 0;
+let planeSpeed;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -18,55 +22,50 @@ function setup() {
 
 function draw() {
   background(220);
-  
-  // rotatingExample(v0, v1);
-  // v1.rotate(0.01);
-  point(v1, v0);
+  spawnPlanes(x,y);
+  displayPlane();
+  movePlanes();
+}
+
+function movePlanes(){
+  for (plane of thePlanes){
+    plane.x += 1;
+    plane.x2 +=1;
+  }
+}
+
+//works for making a black rect at a location
+function spawnPlanes(x, y){
+  let somePlane = {
+    x: x,
+    x2: x +50,
+    y: y,
+    y2: y + 20,
+    speed: planeSpeed * random(0.75, 1.25)
+
+  };
+  thePlanes.push(somePlane);
 
 }
 
-function testing() {
-  background(220);
-  let p1 = createVector(25, 25);
-  let p2 = createVector(75, 75);
+function displayPlane(){
+  for (let plane of thePlanes){
+    noStroke;
+    fill("black");
+    rect(plane.x, plane.y, plane.x2, plane.y2 );
 
-  strokeWeight(5);
-  point(p1);
-  point(p2.x, p2.y);
+  }
 }
 
-// function rotatingExample(a, b){
-//   push();
+
+
+
+// function testing() {
+//   background(220);
+//   let p1 = createVector(25, 25);
+//   let p2 = createVector(75, 75);
+
 //   strokeWeight(5);
-//   translate(a.x, a.y);
-//   line(0, 0, b.x, b.y);
-//   rotate(vec.heading());
-//   let arrowSize = 7;
-//   translate(b.mag() - arrowSize, 0);
-//   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
-//   pop();
-
-// }
-
-
-
-//for refrence so i dont lose the examples
-//   // Rotate v1.
-//   v1.rotate(0.1);
-
-//   // Draw the black arrow.
-//   drawArrow(v0, v1);
-// }
-
-// // Draws an arrow between two vectors.
-// function drawArrow(base, vec) {
-//   push();
-//   strokeWeight(4);
-//   translate(base.x, base.y);
-//   line(0, 0, vec.x, vec.y);
-//   rotate(vec.heading());
-//   let arrowSize = 7;
-//   translate(vec.mag() - arrowSize, 0);
-//   triangle(0, arrowSize / 2, 0, -arrowSize / 2, arrowSize, 0);
-//   pop();
+//   point(p1);
+//   point(p2.x, p2.y);
 // }
