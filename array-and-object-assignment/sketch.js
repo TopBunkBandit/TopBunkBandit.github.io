@@ -1,62 +1,70 @@
-// the thingy
+// Budget Space Invader
 // James Mitchell
 // 9/10/24
-//basically a shooting targets game, you hit the enemy rectangles while avoiding the friendly rectangles
-// dunno how to rotate anything so lets see how this goes
+// current goals:
+// spawn enemys and have them move down when the hit the side
+// change movement to move them over by a certin amount and wait a second before going again
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
 
-let v0;
-let v1;
-let thePlanes = [];
+let theShips = [];
 let x = 0;
 let y = 0;
-let planeSpeed;
+let spawnX = 0;
+let spawnY = 0;
+let shipsSpeed = 5;
+let goDown = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  v1 = createVector(30, 0);
-  v0 = createVector(100, 50);
+  spawnships(spawnX,spawnY);
 }
 
 function draw() {
   background(220);
-  spawnPlanes(x,y);
-  displayPlane();
-  movePlanes();
+  moveshipss();
+  shouldGoDown();
+  displayships();
 }
 
-function movePlanes(){
-  for (plane of thePlanes){
-    plane.x += 1;
-    plane.x2 +=1;
+function moveshipss(){
+  for (ships of theShips){
+    ships.x += ships.speed;
   }
 }
 
-//works for making a black rect at a location
-function spawnPlanes(x, y){
-  let somePlane = {
+//works for making a black rectangle at a location
+function spawnships(x, y){
+  let someships = {
     x: x,
-    x2: x +50,
+    enemyWidth: 50,
     y: y,
-    y2: y + 20,
-    speed: planeSpeed * random(0.75, 1.25)
-
+    enemyHeight: 15,
+    speed: shipsSpeed * random(0.9, 1.1)
   };
-  thePlanes.push(somePlane);
-
+  theShips.push(someships);
 }
 
-function displayPlane(){
-  for (let plane of thePlanes){
+//should move the rectangle by a set amount
+function displayships(){
+  for (let ships of theShips){
     noStroke;
     fill("black");
-    rect(plane.x, plane.y, plane.x2, plane.y2 );
-
+    rect(ships.x, ships.y, ships.enemyWidth, ships.enemyHeight );
   }
 }
 
+//
+function shouldGoDown(){
+  for (let ships of theShips){
+    if (ships.enemyWidth + ships.x >= width || ships.enemyWidth + ships.x < 0){
+      ships.x *= -1;
+      ships.x = -100;
+      ships.y += 5;
+    }
+  }
+}
 
 
 
