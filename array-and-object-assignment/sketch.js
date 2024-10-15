@@ -2,8 +2,8 @@
 // James Mitchell
 // 9/10/24
 // current goals:
-// spawn enemys and have them move down when the hit the side
-// change movement to move them over by a certin amount and wait a second before going again
+// add the little person at the bottom to destroy the ships
+// add ability for ships to drop bombs once per row
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
@@ -13,35 +13,43 @@ let x = 0;
 let y = 0;
 let spawnX = 0;
 let spawnY = 0;
-let shipsSpeed = 5;
+let shipsSpeed = 20;
 let goDown = false;
+let lastTimeMoved = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  spawnships(spawnX,spawnY);
+  spawnships();
+
+  window.setInterval(spawnships, 3000);
 }
 
 function draw() {
   background(220);
-  moveshipss();
+  moveships();
   shouldGoDown();
   displayships();
 }
 
-function moveshipss(){
+
+function moveships(){
   for (ships of theShips){
-    ships.x += ships.speed;
+    if (ships.lastMoved < millis()){
+      ships.x += ships.speed;
+      ships.lastMoved = millis() + 500;
+    }
   }
 }
 
 //works for making a black rectangle at a location
-function spawnships(x, y){
+function spawnships(){
   let someships = {
-    x: x,
+    x: 0,
     enemyWidth: 50,
-    y: y,
+    y: 0,
     enemyHeight: 15,
-    speed: shipsSpeed * random(0.9, 1.1)
+    speed: shipsSpeed,
+    lastMoved: lastTimeMoved,
   };
   theShips.push(someships);
 }
@@ -55,25 +63,21 @@ function displayships(){
   }
 }
 
-//
+//detects if the ship hads reached the edge of the screen and reverses its direction
 function shouldGoDown(){
   for (let ships of theShips){
-    if (ships.enemyWidth + ships.x >= width || ships.enemyWidth + ships.x < 0){
-      ships.x *= -1;
-      ships.x = -100;
-      ships.y += 5;
+    if (ships.enemyWidth + ships.x > width){
+      ships.x += -ships.speed;
+      ships.speed *= -1;
+      ships.y += 20;
+    }
+    if (ships.x < 0){
+      ships.x += 21;
+      ships.speed *= -1;
+      ships.y += 20;
     }
   }
 }
 
 
-
-// function testing() {
-//   background(220);
-//   let p1 = createVector(25, 25);
-//   let p2 = createVector(75, 75);
-
-//   strokeWeight(5);
-//   point(p1);
-//   point(p2.x, p2.y);
-// }
+// millis > lastTimeMoved
