@@ -1,6 +1,6 @@
 // Bouncing Ball Demo
 // James Mitchell
-// 3/10/24
+// 10/3/24
 
 
 let ballArray = [];

@@ -1,6 +1,6 @@
 // Traffic Light Starter Code
 // James M.
-// 24/9/2024
+// 9/24/2024
 
 // GOAL: make a 'traffic light' simulator. For now, just have the light
 // changing according to time. You may want to investigate the millis()

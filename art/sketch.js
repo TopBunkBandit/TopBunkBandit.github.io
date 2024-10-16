@@ -1,6 +1,6 @@
 // Generative art demo
 // James Mitchell
-// 4/10/24
+// 10/4/24
 
 
 const TILESIZE = 15;

@@ -1,6 +1,6 @@
 // Perlin Noise Ball
 // James Mitchell
-// 7/10/24
+// 10/7/24
 
 let x;
 let y;
