@@ -1,15 +1,16 @@
-// Budget Space Invader
+// Poorly Made Budget Space Invader
 // James Mitchell
 // 9/10/24
 // current goals:
 // add the little person at the bottom to destroy the ships
-// add ability for ships to drop bombs once per row
+// add ability for ships to drop bombs after they are destroyed, needs to be implemented along with player movement along the X axis
 // Extra for Experts:
 // - describe what you did to take this project "above and beyond"
 
 
 let theShips = [];
 let deathLocation = [];
+let playerProjectiles = [];
 let x = 0;
 let y = 0;
 let spawnX = 0;
@@ -25,23 +26,23 @@ function setup() {
   spawnships();
   centerX = width/2;
   angleMode(DEGREES);
+  rectMode(CENTER);
 
   window.setInterval(spawnships, 3000);
 }
 
 function draw() {
   background(220);
-  // rotate(0);
   moveships();
   shouldGoDown();
   displayships();
-  playerBase();
-  // rotate(100);
   playerRect();
-  
+  playerBase();  
+  movePlayerProjectiles();
+  showPlayerProjectile();
 }
 
-
+//makes the ships move in more blocky movements, allowing the player to have time to react
 function moveships(){
   for (ships of theShips){
     if (ships.lastMoved < millis()){
@@ -54,9 +55,9 @@ function moveships(){
 //works for making a black rectangle at a location
 function spawnships(){
   let someships = {
-    x: 0,
+    x: 10,
     enemyWidth: 50,
-    y: 0,
+    y: 10,
     enemyHeight: 15,
     speed: shipsSpeed,
     lastMoved: lastTimeMoved,
@@ -89,38 +90,60 @@ function shouldGoDown(){
   }
 }
 
+//creates the white circle at the bottom of the map where the player is located
 function playerBase(){
-  noStroke();
+  stroke(1);
   fill("white");
-  circle(centerX, windowHeight, 75);
+  circle(centerX, windowHeight, 100);
 }
 
+//creates the "weapon" that the player will use, it rotates to match the direction the player wants it to
 function playerRect(){
   if (keyIsDown(LEFT_ARROW)){
-    rotateRect += 0.1;
+    rotateRect += 1;
   }
   if (keyIsDown(RIGHT_ARROW)){
-    rotateRect -= 0.1;
+    rotateRect -= 1;
   }
-  noStroke();
+  stroke(1);
   fill("white");
-  // rect(centerX, windowHeight, 100, 200);
+  push();
+  translate(250, 700);
   rotate(rotateRect);
-  rect(200, 700, 50, 100);
-  
+  rect(-5, 25, 50, 100);
+  pop();
 }
 
+function keyPressed(){
+  if (keyIsDown(32)){
+    let projectile = {
+      x: 10,
+      y: 10,
+      radius: 25,
+      speedX: 10,
+      speedY: 15,
+    };
+    playerProjectiles.push(projectile);
+  }
+}
 
+function movePlayerProjectiles(){
+  for (projectiles of playerProjectiles){
+    projectiles.x += projectiles.speedX;
+    projectiles.y += projectiles.speedY;
 
-// THIS WORKS FOR CHANGING THE ANGLE MAYBE 
-// USE ROTATERECT FOR THE ANGLE AT WHICH IT WILL ROTATE???
-// JUST NEED TO MAKE THE RECT EITHER NOT CHANGE ITS Y AXIS OR MAKE IT IN A SIZE/SHAPE WHERE ITS NOT GOING TO BE NOTICABLE
-// if (keyIsDown LEFT_ARROW){
-//  leftRotate += 0.1
-//}
+  }
+}
 
+function showPlayerProjectile(){
+  for (let projectile of theShips){
+    noStroke;
+    fill("dark green");
+    circle(projectile.x, projectile.y, projectile.radius);
+  }
+}
 
-// not working on it yet but this is the begining code for the enemy destruction
+// not working on it yet but this is the shell code for the enemy destruction
 
 // function dropBombs(){
 //   for (let bomb of deathLocation){
