@@ -13,8 +13,8 @@ function preload(){
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  bgMusicLoop.amp(0.3);
-  clickSound.amp(1.0);
+  bgMusicLoop.amp(1.0);
+  clickSound.amp(0.5);
 }
 
 function draw() {

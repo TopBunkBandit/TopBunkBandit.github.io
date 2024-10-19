@@ -1,9 +1,8 @@
-// Poorly Made Budget Space Invader
+// The Game
 // James Mitchell
 // 9/10/24
 // current goals:
 // change the balls to fire at a angle and keep that angle reguardless of what the rotateRect changes to
-// add ability for ships to drop bombs after they are destroyed, needs to be implemented along with player movement along the X axis
 // Extra for Experts:
 // as far as im aware nothing
 
@@ -22,6 +21,9 @@ let rotateRect = 0;
 let circleCenter;
 let rectCenterX;
 let rectCenterY;
+let moveInterval = 500;
+let waitTime = 1000;
+let lastTimeFired = 0;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -51,7 +53,7 @@ function moveships(){
   for (ships of theShips){
     if (ships.lastMoved < millis()){
       ships.x += ships.speed;
-      ships.lastMoved = millis() + 500;
+      ships.lastMoved = millis() + moveInterval;
     }
   }
 }
@@ -98,15 +100,15 @@ function shouldGoDown(){
 function playerBase(){
   stroke(1);
   fill("white");
-  circle(centerX, windowHeight, 100);
+  circle(centerX, windowHeight, 150);
 }
 
 //creates the "weapon" that the player will use, it rotates to match the direction the player wants it to
 function playerRect(){
-  if (keyIsDown(LEFT_ARROW) && rotateRect > -22){
+  if (keyIsDown(LEFT_ARROW) && rotateRect > -40){
     rotateRect -= 0.5;
   }
-  if (keyIsDown(RIGHT_ARROW) && rotateRect < 16){
+  if (keyIsDown(RIGHT_ARROW) && rotateRect < 40){
     rotateRect += 0.5;
   }
   stroke(1);
@@ -117,7 +119,7 @@ function playerRect(){
   rotate(rotateRect);
   rectCenterX = 20;
   rectCenterY = 25;
-  rect(20, 25, 50, 100);
+  rect(20, 15, 50, 100);
   pop();
 }
 
@@ -125,24 +127,30 @@ function playerRect(){
 
 //working on creating the projectiles
 function keyPressed(){
-  if (keyIsDown(32)){
-    let projectile = {
-      ax: width/2,
-      ay: height - 100,
-      speedX: 1,
-      speedY: 1,
-    };
-    playerProjectiles.push(projectile);
-  }
+  if (lastTimeFired < millis())
+    if (keyIsDown(32)){
+      let projectile = {
+        ax: width/2,
+        ay: height - 100,
+        speedX: 1,
+        speedY: 1,
+        radius: 25,
+      };
+      playerProjectiles.push(projectile);
+      lastTimeFired = millis() + waitTime
+    }
+    
 }
 
 //get the balls to move with a X increase based off of rotateRect at the time that the ball is launched
 //currently running into issues with the balls keeping the rotateRect and moving with the rect
 // they should be moving in that direction and not change direction no matter what
+
+//idea instead of really launching the projectile, create a variable/array that will create a point for the ball to follow 
 function movePlayerProjectiles(){
   for (projectiles of playerProjectiles){
-    projectiles.ay -= projectiles.speedY;
-    projectiles.ax += rotateRect/50;
+    projectiles.ay -= projectiles.speedY + 3;
+    projectiles.ax += rotateRect/5;
     
   }
 }
@@ -158,19 +166,55 @@ function showPlayerProjectile(){
 }
 
 
-//removes any ships or balls that leave the screen
-//might need to remove the ships one in favor of a loss screen IDK tho
 function killOffEntitys(){
+  //removes any ships that go below the window height, will be changed later for a lose screen
   for (ship of theShips){
-    if (ship.y > height){
+    if (ship.y >= height){
       let theIndex = theShips.indexOf(ship);
       theShips.splice(theIndex, 1);
     }
   }
+
+  //removes all projectiles that leave the window to help reduce some lag when to many projectiles are being checked for colision
   for (projectile of playerProjectiles){
     if (projectile.ay < -15 || projectile.ax < -15 || projectile.ax > windowWidth + 15){
       let theIndex = playerProjectiles.indexOf(projectile);
       playerProjectiles.splice(theIndex, 1);
+    } 
+  }
+
+  //collisions between the ball and the enemy
+  for (ship of theShips){
+    for (projectile of playerProjectiles){
+      let closeX = projectile.ax;
+      let closeY = projectile.ay;
+
+      if (projectile.ax > ship.x + ship.enemyWidth) {
+        closeX = ship.x + ship.enemyWidth;
+      } else if(projectile.ax < ship.x){
+        closeX = ship.x;
+      }
+      
+      if (projectile.ay > ship.y + ship.enemyHeight){
+        closeY = ship.y + ship.enemyHeight;
+      } else if (projectile.ay < ship.y) {
+        closeY = ship.y;
+      }
+
+      let distX = closeX - projectile.ax;
+      let distY = closeY - projectile.ay;
+      let distance = sqrt((distX * distX) + (distY * distY));
+
+      if (distance <= projectile.radius){
+        console.log("Hello World")
+        let test = theShips.indexOf(ship);
+        theShips.splice(test, 1);
+        let test2 = playerProjectiles.indexOf(projectile);
+        playerProjectiles.splice(test2, 1);
+        moveInterval -= 50;
+  
+      } 
+
     }
   }
 
@@ -178,31 +222,3 @@ function killOffEntitys(){
 
 // not working on it yet but this is the shell code for the enemy destruction
 // make sure that you check for all rects on all balls, else it may cause issues
-
-// function dropBombs(){
-//   for (let bomb of deathLocation){
-//     bomb;
-//   }
-// }
-
-// function isRectDead(x, y){
-//   let grave = {
-//     deathX: x,
-//     deathY: y,
-//   };
-//   deathLocation.push(grave);
-// }
-
-// function mousePressed(){
-//   for (ship of theShips){
-//     if (collison){
-
-//     }
-//   }
-// }
-
-// function collision(x,y,theShips){
-//   let distanceAway = dist(x,y, theShips.x, theShips.y);
-//   return distanceAway < theShips.x + theShips.enemyWidth && distanceAway < theShips.y + theShips.enemyHeight;
-
-// }
