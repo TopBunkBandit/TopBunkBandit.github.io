@@ -1,8 +1,6 @@
 // The Game
 // James Mitchell
 // 9/10/24
-// current goals:
-// change the balls to fire at a angle and keep that angle reguardless of what the rotateRect changes to
 // Extra for Experts:
 // as far as im aware nothing
 
@@ -24,6 +22,11 @@ let rectCenterY;
 let moveInterval = 500;
 let waitTime = 1000;
 let lastTimeFired = 0;
+let gameState = "title";
+let start = false;
+let bestScore = 0;
+let lastRoundScore = 0;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -33,19 +36,30 @@ function setup() {
   angleMode(DEGREES);
   // rectMode(CENTER);
 
-  window.setInterval(spawnships, 3000);
+  window.setInterval(spawnships,3000);
 }
 
 function draw() {
-  background(220);
-  moveships();
-  shouldGoDown();
-  displayships();
-  playerRect();
-  playerBase();  
-  movePlayerProjectiles();
-  showPlayerProjectile();
-  killOffEntitys();
+  background(200,100,40);
+  if (gameState === "title"){
+    displayStartScreen();
+  }
+
+  else if (gameState === "playing"){
+    moveships();
+    shouldGoDown();
+    displayships();
+    playerRect();
+    playerBase();  
+    movePlayerProjectiles();
+    showPlayerProjectile();
+    killOffEntitys();
+  }
+
+  else{
+    displayEndScreen()
+  }
+
 }
 
 //makes the ships move in more blocky movements, allowing the player to have time to react
@@ -58,7 +72,7 @@ function moveships(){
   }
 }
 
-//works for making a black rectangle at a location
+//makes a entity used as the enemy
 function spawnships(){
   let someships = {
     x: 10,
@@ -71,7 +85,7 @@ function spawnships(){
   theShips.push(someships);
 }
 
-//should move the rectangle by a set amount
+//displays the enemys, pretty self explanitory
 function displayships(){
   for (let ships of theShips){
     noStroke;
@@ -80,7 +94,7 @@ function displayships(){
   }
 }
 
-//detects if the ship hads reached the edge of the screen and reverses its direction
+//detects if the ship hads reached the edge of the screen and reverses its direction, as well as moving it down towards the player slightly
 function shouldGoDown(){
   for (let ships of theShips){
     if (ships.enemyWidth + ships.x > width){
@@ -99,7 +113,7 @@ function shouldGoDown(){
 //creates the white circle at the bottom of the map where the player is located
 function playerBase(){
   stroke(1);
-  fill("white");
+  fill("blue");
   circle(centerX, windowHeight, 150);
 }
 
@@ -112,20 +126,19 @@ function playerRect(){
     rotateRect += 0.5;
   }
   stroke(1);
-  fill("white");
+  fill("lightblue");
   push();
   rectMode(CENTER);
-  translate(centerX - 25, circleCenter);
+  translate(centerX, circleCenter);
   rotate(rotateRect);
   rectCenterX = 20;
   rectCenterY = 25;
-  rect(20, 15, 50, 100);
+  rect(0, 0, 50, 100);
   pop();
 }
 
 
-
-//working on creating the projectiles
+//when the spacebar is pressed it spawns a projectile with a set angle
 function keyPressed(){
   if (lastTimeFired < millis())
     if (keyIsDown(32)){
@@ -135,6 +148,7 @@ function keyPressed(){
         speedX: 1,
         speedY: 1,
         radius: 25,
+        angle: rotateRect,
       };
       playerProjectiles.push(projectile);
       lastTimeFired = millis() + waitTime
@@ -142,36 +156,33 @@ function keyPressed(){
     
 }
 
-//get the balls to move with a X increase based off of rotateRect at the time that the ball is launched
-//currently running into issues with the balls keeping the rotateRect and moving with the rect
-// they should be moving in that direction and not change direction no matter what
-
-//idea instead of really launching the projectile, create a variable/array that will create a point for the ball to follow 
+//moves the players 'bullets' at the angle they were fired from
 function movePlayerProjectiles(){
   for (projectiles of playerProjectiles){
     projectiles.ay -= projectiles.speedY + 3;
-    projectiles.ax += rotateRect/5;
+    projectiles.ax += projectiles.angle/5;
     
   }
 }
-
 
 //Displays the players projectiles
 function showPlayerProjectile(){
   for (let projectile of playerProjectiles){
     noStroke;
-    fill("purple");
+    fill("white");
     circle(projectile.ax, projectile.ay, 25);
   }
 }
 
 
+//removes unnessicary entitys if certin conditions are met
 function killOffEntitys(){
-  //removes any ships that go below the window height, will be changed later for a lose screen
+  //ends the game if any enemys reach the player base
   for (ship of theShips){
-    if (ship.y >= height){
+    if (ship.y >= height - 150 && ship.x >= width/2){
       let theIndex = theShips.indexOf(ship);
       theShips.splice(theIndex, 1);
+      gameState = "end"
     }
   }
 
@@ -191,13 +202,15 @@ function killOffEntitys(){
 
       if (projectile.ax > ship.x + ship.enemyWidth) {
         closeX = ship.x + ship.enemyWidth;
-      } else if(projectile.ax < ship.x){
+      } 
+      else if(projectile.ax < ship.x){
         closeX = ship.x;
       }
       
       if (projectile.ay > ship.y + ship.enemyHeight){
         closeY = ship.y + ship.enemyHeight;
-      } else if (projectile.ay < ship.y) {
+      } 
+      else if (projectile.ay < ship.y) {
         closeY = ship.y;
       }
 
@@ -211,7 +224,8 @@ function killOffEntitys(){
         theShips.splice(test, 1);
         let test2 = playerProjectiles.indexOf(projectile);
         playerProjectiles.splice(test2, 1);
-        moveInterval -= 50;
+        moveInterval -= 40;
+        lastRoundScore += 1
   
       } 
 
@@ -220,5 +234,62 @@ function killOffEntitys(){
 
 }
 
-// not working on it yet but this is the shell code for the enemy destruction
-// make sure that you check for all rects on all balls, else it may cause issues
+//any time the program ends it will display the end screen
+function displayEndScreen(){
+  if (bestScore <= lastRoundScore){
+    bestScore = lastRoundScore;
+  } 
+  background(200,100,40)
+  textAlign(CENTER);
+  fill(255)
+  textSize(20)
+  text("Game Over :(", width/2, height/2 - 75)
+  text("your score:" , width/2, height/2 - 50)
+  text(lastRoundScore, width/2, height/2 - 25)
+  text("high score:", width/2, height/2)
+  text(bestScore, width/2, height/2 + 25)
+  text("Press this button to play again", width/2, height/2 + 150)
+  rect(width/2 - 100 ,height/2 + 175, 200, 50 )
+  
+  if (start){
+    gameState = "playing";
+    theShips.splice(0,1000)
+    moveInterval = 500;
+    spawnships();
+    start = false;
+    lastRoundScore = 0
+
+  }
+
+}
+
+//when program starts for the first time it will show the start screen
+function displayStartScreen(){
+  background(200,100,40)
+  textAlign(CENTER);
+  fill(255)
+  textSize(20)
+  text("Welcome to the game", width/2, height/2 - 75)
+  text("The Goal is to destroy as many enemy rectangles as possible before they reach you :)", width/2, height/2 - 50)
+  text("With each enemy you destroy they become faster", width/2, height/2 - 25)
+  text("CONTROLS", width/2, height/2)
+  text("Left arrow to rotate left", width/2, height/2 + 25)
+  text("Right arrow to rotate right", width/2, height/2 + 50)
+  text("Space bar to fire", width/2, height/2 + 75)
+  text("Please do note that this game is very boring, this was unintentional", width/2, height/2 + - 200)
+  text("Press this button to begin", width/2, height/2 + 150)
+  rect(width/2 - 100 ,height/2 + 175, 200, 50 )
+
+  if (start){
+    gameState = "playing";
+    start = false;
+  }
+  
+}
+
+//only used to start/restart the game
+function mousePressed(){
+  if (mouseX < width/2 + 100 && mouseX > width/2 - 100 && mouseY > height/2 + 125 && mouseY < height/2 + 225){
+    start = true;
+  } 
+} 
