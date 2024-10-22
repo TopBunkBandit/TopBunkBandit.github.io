@@ -9,6 +9,7 @@
 - [Bubble Object Demo](bubble)
 - [Sound Effects Demo](sound)
 - [Rotate and Translate Demo](rotate)
+- [Grid Demo](grid)
 
 ## Projects ;3
 - [Interactive Scene](interactive-scene)
