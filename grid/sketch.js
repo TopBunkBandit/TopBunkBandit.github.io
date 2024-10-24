@@ -128,3 +128,23 @@ function windowResized(){
   
   cellSize = height/GRID_SIZE;
 }
+
+// function life(rows,cols){
+//   for (let y = 0; y < rows;y++){
+//     for (let x = 0; x < cols; x++){
+//       if (grid[x][y] === 1){
+//         //check for not enough grids
+//         if (checkIfLonley)
+//         //check for too many grids
+
+//         //check if can give birth
+
+//         //remain stable if nothing happened
+//       }
+//     }
+//   }
+// }
+
+// function checkIfLonley(x,y){
+//   if (grid[x][y] === 0)
+// }
