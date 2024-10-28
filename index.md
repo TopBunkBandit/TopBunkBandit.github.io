@@ -10,7 +10,10 @@
 - [Sound Effects Demo](sound)
 - [Rotate and Translate Demo](rotate)
 - [Grid Demo](grid)
+- [Game of Life](game-of-life)
+- [Rectangular Grid Demo](rect-grid)
 
 ## Projects ;3
 - [Interactive Scene](interactive-scene)
 - [Arrays and Object Notation](array-and-object-assignment)
+- [Grid Based Assignment](grid-based-assignment)
