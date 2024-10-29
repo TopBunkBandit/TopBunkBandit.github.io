@@ -12,6 +12,7 @@
 - [Grid Demo](grid)
 - [Game of Life](game-of-life)
 - [Rectangular Grid Demo](rect-grid)
+- [Grid Based Movement](grid-movement)
 
 ## Projects ;3
 - [Interactive Scene](interactive-scene)
