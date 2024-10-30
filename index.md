@@ -18,3 +18,5 @@
 - [Interactive Scene](interactive-scene)
 - [Arrays and Object Notation](array-and-object-assignment)
 - [Grid Based Assignment](grid-based-assignment)
+
+- [Final Project](final-project-risk)
