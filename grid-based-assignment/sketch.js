@@ -16,10 +16,16 @@ let shipHere;
 let ships;
 let newSmallX = 100;
 let newSmallY = 100;
+let smallSize = CELL_SIZE;
 let newMedX = 100;
 let newMedY = 100;
+let medSize = CELL_SIZE*2;
 let newLargeX = 100;
 let newLargeY = 100;
+let largeSize = CELL_SIZE*3;
+let calledForSmall = false;
+let calledForMed = false;
+let calledForLarge = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -95,37 +101,86 @@ function mousePressed(){
 // fill(random(100, 255),random(100, 255),random(200, 255));
 
 
-//adjust sizes to be 20/30/50
-//better yet use this time to make a few consts for the sizes
-//need to make it so this runs when overtop of one of a few ships
+//NEED TO CHANGE THIS UP SO THAT A MOUSE PRESS PICKS THE BLOCK UP INSTEAD OF HAVING TO HOLD IT
+//THAT WAY THE ELSE CAN SNAP TO GRIDS THAT ARE NOT JUST ON THE EDGE
+//MAYBE JUST GET RID OF THE CHECK TO SEE IF ITS NOT WITHIN A SPACE???
+//HEAD EMPTY
+//CODING BROKE ALL OF MY BRAIN CELLS 
 function placeShips(x,y){
   fill("grey");
-  if(mouseIsPressed && mouseX >= newSmallX - 25 && mouseX <= newSmallX + 25 && mouseY >= newSmallY - 25 && mouseY <= newSmallY + 25){
-    square(x-25,y-25,50);
-    newSmallX = x;
-    newSmallY = y;
-    square(newMedX - 50 ,newMedY - 50 ,100);
-    square(newLargeX-100,newLargeY-100,200);
+  if(mouseIsPressed && mouseX >= newSmallX - smallSize/2 && mouseX <= newSmallX + smallSize/2 && mouseY >= newSmallY - smallSize/2 && mouseY <= newSmallY + smallSize/2){
+    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
+      square(x-smallSize/2,y-smallSize/2,smallSize);
+      newSmallX = x;
+      newSmallY = y;
+      square(newMedX - medSize/2 ,newMedY - medSize/2 ,medSize);
+      square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+
+    }
+    else{
+      calledForSmall = true;
+      snapShipsToGrid(newSmallX,newSmallY);
+
+    }
 
   }
-  else if(mouseIsPressed && mouseX >= newMedX - 50 && mouseX <= newMedX + 50 && mouseY >= newMedY - 50 && mouseY <= newMedY + 50){
-    square(x - 50,y - 50,100);
-    newMedX = x;
-    newMedY = y;
-    square(newSmallX - 25,newSmallY - 25,50);
-    square(newLargeX-100,newLargeY-100,200);
+  else if(mouseIsPressed && mouseX >= newMedX - medSize/2 && mouseX <= newMedX + medSize/2 && mouseY >= newMedY - medSize/2 && mouseY <= newMedY + medSize/2){
+    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
+      square(x - medSize/2,y - medSize/2,medSize);
+      newMedX = x;
+      newMedY = y;
+      square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
+      square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+    }
+    else{
+      calledForMed = true;
+      snapShipsToGrid(newMedX,newMedY);
+
+    }
   }
-  else if(mouseIsPressed && mouseX >= newLargeX - 100 && mouseX <= newLargeX + 100 && mouseY >= newLargeY - 100 && mouseY <= newLargeY + 100){
-    square(x - 100,y - 100, 200);
-    newLargeX = x;
-    newLargeY = y;
-    square(newSmallX - 25,newSmallY - 25,50);
-    square(newMedX - 50 ,newMedY - 50, 100);
+  else if(mouseIsPressed && mouseX >= newLargeX - largeSize/2 && mouseX <= newLargeX + largeSize/2 && mouseY >= newLargeY - largeSize/2 && mouseY <= newLargeY + largeSize/2){
+    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
+      square(x - largeSize/2,y - largeSize/2, largeSize);
+      newLargeX = x;
+      newLargeY = y;
+      square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
+      square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
+    }
+    else{
+      calledForLarge = true;
+      snapShipsToGrid(newLargeX,newLargeY);
+    }
   }
   else{
-    square(newMedX - 50 ,newMedY - 50, 100);
-    square(newSmallX - 25,newSmallY - 25,50);
-    square(newLargeX-100,newLargeY-100,200);
+    square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
 
+    square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
+
+    square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+  }
+}
+
+function snapShipsToGrid(x,y){
+  snapX = Math.floor(x/CELL_SIZE);
+  snapY = Math.floor(y/CELL_SIZE);
+  console.log(snapX);
+  console.log(snapY);
+  //SMALL WORKS I DONT KNOW WHY, MAYBE BECAUSE ITS THE SAME AS THE MEDIUM
+  if (calledForSmall){
+    newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
+    newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
+    calledForSmall = false;
+  }
+  //MED WORKS BECAUSE ITS 2X2, SO IT DOESNT NEED THE EXTRA CELL TO FIT WELL
+  if (calledForMed){
+    newMedX = Math.floor(snapX*CELL_SIZE);
+    newMedY = Math.floor(snapY*CELL_SIZE);
+    calledForMed= false;
+  }
+  //LARGE WORKS BECAUSE ITS 3 CELLS LARGE
+  if (calledForLarge){
+    newLargeX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
+    newLargeY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
+    calledForLarge = false;
   }
 }
