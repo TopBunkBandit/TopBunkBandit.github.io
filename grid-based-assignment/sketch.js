@@ -3,7 +3,7 @@
 // 10/28/24
 //
 // Extra for Experts:
-// - describe what you did to take this project "above and beyond"
+// brain(?)
 
 let grid;
 let attackedGrid;
@@ -14,14 +14,14 @@ let attacked;
 let setUpPhase = true;
 let shipHere;
 let ships;
-let newSmallX = 100;
-let newSmallY = 100;
+let newSmallX = 200;
+let newSmallY = 300;
 let smallSize = CELL_SIZE;
-let newMedX = 100;
-let newMedY = 100;
+let newMedX = 250;
+let newMedY = 300;
 let medSize = CELL_SIZE*2;
-let newLargeX = 100;
-let newLargeY = 100;
+let newLargeX = 300;
+let newLargeY = 300;
 let largeSize = CELL_SIZE*3;
 let calledForSmall = false;
 let calledForMed = false;
@@ -64,12 +64,12 @@ function displayGrid(){
   for (let y = 0; y < rows; y++){
     for (let x = 0; x < cols; x++){
       if (x > 5 && x < 20 && y > 1 && y < 16){
-        fill(random(100, 255),random(100, 255),random(200, 255));
+        fill("lightblue");
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
 
       }
       if (x > 5 && x < 20 && y > 20 && y < 35 && !setUpPhase){
-        fill(random(100, 255),random(100, 255),random(200, 255));
+        fill("lightblue");
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
       }
     }
@@ -101,20 +101,19 @@ function mousePressed(){
 // fill(random(100, 255),random(100, 255),random(200, 255));
 
 
-//NEED TO CHANGE THIS UP SO THAT A MOUSE PRESS PICKS THE BLOCK UP INSTEAD OF HAVING TO HOLD IT
-//THAT WAY THE ELSE CAN SNAP TO GRIDS THAT ARE NOT JUST ON THE EDGE
-//MAYBE JUST GET RID OF THE CHECK TO SEE IF ITS NOT WITHIN A SPACE???
-//HEAD EMPTY
-//CODING BROKE ALL OF MY BRAIN CELLS 
+//makes sure that the 'battleships' stay within your grid and snaps to the grid without any part of it leaving the grid
 function placeShips(x,y){
   fill("grey");
-  if(mouseIsPressed && mouseX >= newSmallX - smallSize/2 && mouseX <= newSmallX + smallSize/2 && mouseY >= newSmallY - smallSize/2 && mouseY <= newSmallY + smallSize/2){
-    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
-      square(x-smallSize/2,y-smallSize/2,smallSize);
+  //small ship
+  if(mouseIsPressed && mouseX >= newSmallX - smallSize && mouseX <= newSmallX + smallSize && mouseY >= newSmallY - smallSize && mouseY <= newSmallY + smallSize){
+    if(mouseX/CELL_SIZE > 6 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 16){
+      rect(x-smallSize/2,y-smallSize/2,smallSize*2,smallSize);
       newSmallX = x;
       newSmallY = y;
       square(newMedX - medSize/2 ,newMedY - medSize/2 ,medSize);
       square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+      calledForSmall = true;
+      snapShipsToGrid(newSmallX,newSmallY);
 
     }
     else{
@@ -124,13 +123,16 @@ function placeShips(x,y){
     }
 
   }
-  else if(mouseIsPressed && mouseX >= newMedX - medSize/2 && mouseX <= newMedX + medSize/2 && mouseY >= newMedY - medSize/2 && mouseY <= newMedY + medSize/2){
-    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
+  //medium battleship
+  else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
+    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17){
       square(x - medSize/2,y - medSize/2,medSize);
       newMedX = x;
       newMedY = y;
-      square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
+      rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
       square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+      calledForMed = true;
+      snapShipsToGrid(newMedX,newMedY);
     }
     else{
       calledForMed = true;
@@ -138,13 +140,16 @@ function placeShips(x,y){
 
     }
   }
+  //large battleship
   else if(mouseIsPressed && mouseX >= newLargeX - largeSize/2 && mouseX <= newLargeX + largeSize/2 && mouseY >= newLargeY - largeSize/2 && mouseY <= newLargeY + largeSize/2){
-    if(!(mouseX/CELL_SIZE > 5 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17)){
+    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 3 && mouseY/CELL_SIZE < 15){
       square(x - largeSize/2,y - largeSize/2, largeSize);
       newLargeX = x;
       newLargeY = y;
-      square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
+      rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
       square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
+      calledForLarge = true;
+      snapShipsToGrid(newLargeX,newLargeY);
     }
     else{
       calledForLarge = true;
@@ -154,12 +159,14 @@ function placeShips(x,y){
   else{
     square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
 
-    square(newSmallX - smallSize/2,newSmallY - smallSize/2,smallSize);
-
+    rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
     square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
   }
 }
 
+
+//need to check for collisions so that the ships dont overlap
+//add variable that is triggered when ships are all placed to let game start
 function snapShipsToGrid(x,y){
   snapX = Math.floor(x/CELL_SIZE);
   snapY = Math.floor(y/CELL_SIZE);
@@ -167,9 +174,12 @@ function snapShipsToGrid(x,y){
   console.log(snapY);
   //SMALL WORKS I DONT KNOW WHY, MAYBE BECAUSE ITS THE SAME AS THE MEDIUM
   if (calledForSmall){
-    newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
-    newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
-    calledForSmall = false;
+    //working code for the main square, need to adjust numbers so that the second square also causes the small ship to not lock in place
+    if(!(newSmallX/CELL_SIZE  + 1 > newMedX/CELL_SIZE && newSmallX/CELL_SIZE  - 1 < newMedX/CELL_SIZE && newSmallY/CELL_SIZE + 1 > newMedY/CELL_SIZE && newSmallY/CELL_SIZE - 1 < newMedY/CELL_SIZE)){
+      newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
+      newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
+      calledForSmall = false;
+    }
   }
   //MED WORKS BECAUSE ITS 2X2, SO IT DOESNT NEED THE EXTRA CELL TO FIT WELL
   if (calledForMed){
