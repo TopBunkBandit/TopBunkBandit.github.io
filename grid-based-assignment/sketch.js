@@ -125,7 +125,7 @@ function placeShips(x,y){
   }
   //medium battleship
   else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
-    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17){
+    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 3 && mouseY/CELL_SIZE < 16){
       square(x - medSize/2,y - medSize/2,medSize);
       newMedX = x;
       newMedY = y;
@@ -175,7 +175,7 @@ function snapShipsToGrid(x,y){
   //SMALL WORKS I DONT KNOW WHY, MAYBE BECAUSE ITS THE SAME AS THE MEDIUM
   if (calledForSmall){
     //working code for the main square, need to adjust numbers so that the second square also causes the small ship to not lock in place
-    if(!(newSmallX/CELL_SIZE  + 1 > newMedX/CELL_SIZE && newSmallX/CELL_SIZE  - 1 < newMedX/CELL_SIZE && newSmallY/CELL_SIZE + 1 > newMedY/CELL_SIZE && newSmallY/CELL_SIZE - 1 < newMedY/CELL_SIZE)){
+    if(smallCollision()){
       newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
       newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
       calledForSmall = false;
@@ -183,14 +183,37 @@ function snapShipsToGrid(x,y){
   }
   //MED WORKS BECAUSE ITS 2X2, SO IT DOESNT NEED THE EXTRA CELL TO FIT WELL
   if (calledForMed){
-    newMedX = Math.floor(snapX*CELL_SIZE);
-    newMedY = Math.floor(snapY*CELL_SIZE);
-    calledForMed= false;
-  }
+    if (medCollision){
+      newMedX = Math.floor(snapX*CELL_SIZE);
+      newMedY = Math.floor(snapY*CELL_SIZE);
+      calledForMed= false;
+
+    }
+    }
   //LARGE WORKS BECAUSE ITS 3 CELLS LARGE
   if (calledForLarge){
     newLargeX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
     newLargeY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
     calledForLarge = false;
+ 
   }
+}
+
+
+function smallCollision(){
+  if(!(newSmallX/CELL_SIZE  + 2 > newMedX/CELL_SIZE && newSmallX/CELL_SIZE  - 2 < newMedX/CELL_SIZE && newSmallY/CELL_SIZE + 1 > newMedY/CELL_SIZE && newSmallY/CELL_SIZE - 1 < newMedY/CELL_SIZE)){
+    if(!(newSmallX/CELL_SIZE  + 3 > newLargeX/CELL_SIZE && newSmallX/CELL_SIZE  - 2 < newLargeX/CELL_SIZE && newSmallY/CELL_SIZE + 2 > newLargeY/CELL_SIZE && newSmallY/CELL_SIZE - 2 < newLargeY/CELL_SIZE)){
+      return true
+    }
+  }
+  return false;
+}
+
+//doesnt work idk why
+function medCollision(){
+  if(true){
+    console.log("balls")
+    return false;
+  }
+  return true;
 }
