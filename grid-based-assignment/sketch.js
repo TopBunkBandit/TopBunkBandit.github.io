@@ -1,9 +1,10 @@
-// Battleship (maybe)(its so jover)
+// Battleship (maybe)
 // James Mitchell
 // 10/28/24
+// NEED TO ADD A WAY SO THAT WHEN SETUP PHASE ENDS THE CURRENT SHIP LOCATIONS ARE PUT INTO THE GRID
 //
 // Extra for Experts:
-// brain(?)
+// none
 
 let grid;
 let attackedGrid;
@@ -44,6 +45,8 @@ function draw() {
   else{
     displayGrid();
 
+
+
   }
 }
 
@@ -53,7 +56,7 @@ function gridGeneration(cols, rows){
   for (let y = 0; y < rows; y++){
     newGrid.push([]);
     for (let x = 0; x < cols; x++){
-      newGrid[y].push("Not hit");
+      newGrid[y].push("fog");
     }
   }
   return newGrid;
@@ -81,15 +84,16 @@ function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
   //rework the thingy
-  if (!setUpPhase){
-    if(mouseX >= CELL_SIZE*6 && mouseX <= CELL_SIZE*20){
-      if (grid[x][y] !== "miss" && grid[x][y] !== "hit"){
-        if (shipHere){
-          grid[x][y] = "hit";
-          console.log("test");
+  if (setUpPhase){
+    if(x >= 6 && x <= 20 && y >= 20 && y <= 70){
+      if (grid[x][y]  === "fog"){
+        if (grid[x][y] === "ship here"){
+          grid[x][y]  = "hit";
+          console.log("hit");
         }
         else{
-          grid[x][y] = "missed";
+          grid[x][y]  = "missed";
+          console.log("missed");
         }
       }
     }
@@ -100,7 +104,7 @@ function mousePressed(){
 // pretty colors :)
 // fill(random(100, 255),random(100, 255),random(200, 255));
 
-
+//places the ships
 //makes sure that the 'battleships' stay within your grid and snaps to the grid without any part of it leaving the grid
 function placeShips(x,y){
   fill("grey");
@@ -114,14 +118,11 @@ function placeShips(x,y){
       square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
       calledForSmall = true;
       snapShipsToGrid(newSmallX,newSmallY);
-
     }
     else{
       calledForSmall = true;
       snapShipsToGrid(newSmallX,newSmallY);
-
     }
-
   }
   //medium battleship
   else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
@@ -137,7 +138,6 @@ function placeShips(x,y){
     else{
       calledForMed = true;
       snapShipsToGrid(newMedX,newMedY);
-
     }
   }
   //large battleship
@@ -158,7 +158,6 @@ function placeShips(x,y){
   }
   else{
     square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
-
     rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
     square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
   }
@@ -194,3 +193,5 @@ function snapShipsToGrid(x,y){
     calledForLarge = false;
   }
 }
+
+
