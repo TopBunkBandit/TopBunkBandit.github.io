@@ -27,6 +27,8 @@ let largeSize = CELL_SIZE*3;
 let calledForSmall = false;
 let calledForMed = false;
 let calledForLarge = false;
+let abcd = true;
+
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -37,13 +39,22 @@ function setup() {
 }
 
 function draw() {
+  
   background(220);
   if (setUpPhase){
     displayGrid();
     placeShips(mouseX, mouseY);
+    if (key === "q"){
+      setUpPhase = !setUpPhase;
+    }
+    
   }
   else{
     displayGrid();
+    if (key === " "){
+      setUpPhase = !setUpPhase;
+    }
+    placeShips(mouseX, mouseY);
 
 
 
@@ -75,6 +86,10 @@ function displayGrid(){
         fill("lightblue");
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
       }
+      if (grid[x][y] === "missed" || grid[x][y] === "hit"){
+        fill("black");
+        rect(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE,CELL_SIZE);
+      }
     }
   }
 }
@@ -84,20 +99,23 @@ function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
   //rework the thingy
-  if (setUpPhase){
-    if(x >= 6 && x <= 20 && y >= 20 && y <= 70){
+  if (!setUpPhase){
+    if(x >= 6 && x <= 20){
       if (grid[x][y]  === "fog"){
-        if (grid[x][y] === "ship here"){
-          grid[x][y]  = "hit";
-          console.log("hit");
-        }
-        else{
-          grid[x][y]  = "missed";
-          console.log("missed");
-        }
+        grid[x][y]  = "missed";
+        console.log("missed");
+      }
+
+      else if (grid[x][y] === "ship here"){
+        grid[x][y] = "hit";
+        //need to put in the acctual numbers and not what is in the grid
+        console.log("hit");
+      }
+      else{
+        console.log("alread fired here");
       }
     }
-  }
+ }
 }
 
 
@@ -109,58 +127,86 @@ function mousePressed(){
 function placeShips(x,y){
   fill("grey");
   //small ship
-  if(mouseIsPressed && mouseX >= newSmallX - smallSize && mouseX <= newSmallX + smallSize && mouseY >= newSmallY - smallSize && mouseY <= newSmallY + smallSize){
-    if(mouseX/CELL_SIZE > 6 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 16){
-      rect(x-smallSize/2,y-smallSize/2,smallSize*2,smallSize);
-      newSmallX = x;
-      newSmallY = y;
-      square(newMedX - medSize/2 ,newMedY - medSize/2 ,medSize);
-      square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
-      calledForSmall = true;
-      snapShipsToGrid(newSmallX,newSmallY);
+  if (setUpPhase){
+
+    if(mouseIsPressed && mouseX >= newSmallX - smallSize && mouseX <= newSmallX + smallSize && mouseY >= newSmallY - smallSize && mouseY <= newSmallY + smallSize){
+      if(mouseX/CELL_SIZE > 6 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 16){
+        rect(x-smallSize/2,y-smallSize/2,smallSize*2,smallSize);
+        newSmallX = x;
+        newSmallY = y;
+        square(newMedX - medSize/2 ,newMedY - medSize/2 ,medSize);
+        square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+        calledForSmall = true;
+        snapShipsToGrid(newSmallX,newSmallY);
+      }
+      else{
+        calledForSmall = true;
+        snapShipsToGrid(newSmallX,newSmallY);
+      }
+    }
+    //medium battleship
+    else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
+      if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17){
+        square(x - medSize/2,y - medSize/2,medSize);
+        newMedX = x;
+        newMedY = y;
+        rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
+        square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+        calledForMed = true;
+        snapShipsToGrid(newMedX,newMedY);
+      }
+      else{
+        calledForMed = true;
+        snapShipsToGrid(newMedX,newMedY);
+      }
+    }
+    //large battleship
+    else if(mouseIsPressed && mouseX >= newLargeX - largeSize/2 && mouseX <= newLargeX + largeSize/2 && mouseY >= newLargeY - largeSize/2 && mouseY <= newLargeY + largeSize/2){
+      if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 3 && mouseY/CELL_SIZE < 15){
+        square(x - largeSize/2,y - largeSize/2, largeSize);
+        newLargeX = x;
+        newLargeY = y;
+        rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
+        square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
+        calledForLarge = true;
+        snapShipsToGrid(newLargeX,newLargeY);
+      }
+      else{
+        calledForLarge = true;
+        snapShipsToGrid(newLargeX,newLargeY);
+      }
     }
     else{
-      calledForSmall = true;
-      snapShipsToGrid(newSmallX,newSmallY);
-    }
-  }
-  //medium battleship
-  else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
-    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17){
-      square(x - medSize/2,y - medSize/2,medSize);
-      newMedX = x;
-      newMedY = y;
-      rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
-      square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
-      calledForMed = true;
-      snapShipsToGrid(newMedX,newMedY);
-    }
-    else{
-      calledForMed = true;
-      snapShipsToGrid(newMedX,newMedY);
-    }
-  }
-  //large battleship
-  else if(mouseIsPressed && mouseX >= newLargeX - largeSize/2 && mouseX <= newLargeX + largeSize/2 && mouseY >= newLargeY - largeSize/2 && mouseY <= newLargeY + largeSize/2){
-    if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 3 && mouseY/CELL_SIZE < 15){
-      square(x - largeSize/2,y - largeSize/2, largeSize);
-      newLargeX = x;
-      newLargeY = y;
-      rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
       square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
-      calledForLarge = true;
-      snapShipsToGrid(newLargeX,newLargeY);
-    }
-    else{
-      calledForLarge = true;
-      snapShipsToGrid(newLargeX,newLargeY);
+      rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
+      square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
     }
   }
   else{
-    square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
-    rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
-    square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
+    if (abcd){
+      console.log('yo');
+      //works
+      grid[Math.floor(newSmallX/CELL_SIZE)][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
+      grid[Math.floor(newSmallX/CELL_SIZE)+1][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
+      //doesnt work atm, grid is moved in the wrong direction(?)
+      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE)] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE) + 1][Math.floor(newMedY/CELL_SIZE)] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE) + 1] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE) + 1][Math.floor(newMedY/CELL_SIZE) + 1] = "ship here";
+
+      //works
+      for (let m = -1; m < 2; m++){
+        for (let n = -1; n < 2; n++){
+          grid[Math.floor(newLargeX/CELL_SIZE)+m][Math.floor(newLargeY/CELL_SIZE)+n] = "ship here";
+        }
+      }
+      abcd === false;
+    }
+    abcd === false;
+
   }
+
+
 }
 
 
@@ -169,8 +215,8 @@ function placeShips(x,y){
 function snapShipsToGrid(x,y){
   snapX = Math.floor(x/CELL_SIZE);
   snapY = Math.floor(y/CELL_SIZE);
-  console.log(snapX);
-  console.log(snapY);
+  // console.log(snapX);
+  // console.log(snapY);
   //SMALL WORKS I DONT KNOW WHY, MAYBE BECAUSE ITS THE SAME AS THE MEDIUM
   if (calledForSmall){
     //working code for the main square, need to adjust numbers so that the second square also causes the small ship to not lock in place
@@ -191,6 +237,10 @@ function snapShipsToGrid(x,y){
     newLargeX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
     newLargeY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
     calledForLarge = false;
+  }
+
+  if (key === "s"){
+
   }
 }
 
