@@ -55,9 +55,6 @@ function draw() {
       setUpPhase = !setUpPhase;
     }
     placeShips(mouseX, mouseY);
-
-
-
   }
 }
 
@@ -77,18 +74,25 @@ function gridGeneration(cols, rows){
 function displayGrid(){
   for (let y = 0; y < rows; y++){
     for (let x = 0; x < cols; x++){
+      //player grid
       if (x > 5 && x < 20 && y > 1 && y < 16){
         fill("lightblue");
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
-
       }
+      //enemy grid
       if (x > 5 && x < 20 && y > 20 && y < 35 && !setUpPhase){
         fill("lightblue");
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
       }
-      if (grid[x][y] === "missed" || grid[x][y] === "hit"){
-        fill("black");
-        rect(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE,CELL_SIZE);
+      //if you hit a empty square
+      if (grid[y][x] === "missed"){
+        fill("white");
+        circle(x*CELL_SIZE + CELL_SIZE/2,y*CELL_SIZE + CELL_SIZE/2 ,CELL_SIZE/2);
+      }
+      //if you hit a ship
+      if (grid[y][x] === "hit"){
+        fill("red");
+        circle(x*CELL_SIZE + CELL_SIZE/2,y*CELL_SIZE + CELL_SIZE/2 ,CELL_SIZE/2);
       }
     }
   }
@@ -98,21 +102,23 @@ function displayGrid(){
 function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
-  //rework the thingy
+
   if (!setUpPhase){
-    if(x >= 6 && x <= 20){
-      if (grid[x][y]  === "fog"){
-        grid[x][y]  = "missed";
+    //figure out why it says already fired here when at y = 26+
+    if(x >= 6 && x <= 19){
+      if (grid[y][x]  === "fog"){
+        grid[y][x]  = "missed";
         console.log("missed");
       }
 
-      else if (grid[x][y] === "ship here"){
-        grid[x][y] = "hit";
-        //need to put in the acctual numbers and not what is in the grid
+      else if (grid[y][x] === "ship here"){
+        grid[y][x] = "hit";
         console.log("hit");
       }
+
       else{
         console.log("alread fired here");
+        console.log(x, y);
       }
     }
  }
@@ -183,16 +189,17 @@ function placeShips(x,y){
     }
   }
   else{
-    if (abcd){
+    while (abcd){
       console.log('yo');
       //works
       grid[Math.floor(newSmallX/CELL_SIZE)][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
       grid[Math.floor(newSmallX/CELL_SIZE)+1][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
-      //doesnt work atm, grid is moved in the wrong direction(?)
+
+      //works
       grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE)] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE) + 1][Math.floor(newMedY/CELL_SIZE)] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE) + 1] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE) + 1][Math.floor(newMedY/CELL_SIZE) + 1] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE) - 1][Math.floor(newMedY/CELL_SIZE)] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE) - 1] = "ship here";
+      grid[Math.floor(newMedX/CELL_SIZE) - 1][Math.floor(newMedY/CELL_SIZE) - 1] = "ship here";
 
       //works
       for (let m = -1; m < 2; m++){
@@ -200,9 +207,8 @@ function placeShips(x,y){
           grid[Math.floor(newLargeX/CELL_SIZE)+m][Math.floor(newLargeY/CELL_SIZE)+n] = "ship here";
         }
       }
-      abcd === false;
+      abcd = false;
     }
-    abcd === false;
 
   }
 
