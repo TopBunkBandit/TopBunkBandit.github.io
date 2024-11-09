@@ -268,22 +268,24 @@ function snapShipsToGrid(x,y){
 }
 
 function placeAIShips(){
-  while (randNumsOverlapping){
-  //this is just to make sure there are no overlapping ships
-  //checking for large square
-  if (randLargeX !== randMedX && randLargeY !== randMedY && randLargeX + 2 !== randMedX + 1 && randLargeY + 2 !== randMedY + 1){
-   if (randSmallX !== randMedX && randSmallY !== randMedY && randSmallX !== randMedX + 1 && randSmallY + 1 !== randMedY + 1){
-    randNumsOverlapping = false;
-      }
-    }
-    else{
-      console.log("error: overlapping ships")
-      randSmallX = Math.floor(random(13));
-      randLargeX = Math.floor(random(12));
-      randSmallY = Math.floor(random(14));
-      randLargeY = Math.floor(random(12));
-    }
-  }
+  // not causing errors but it is compleatly freezing the program randomly
+  // while (randNumsOverlapping){
+  // //this is just to make sure there are no overlapping ships
+  // //checking for large square
+  //   if (randLargeX !== randMedX && randLargeY !== randMedY && randLargeX + 2 !== randMedX + 1 && randLargeY + 2 !== randMedY + 1){
+  //     if (randSmallX !== randMedX && randSmallY !== randMedY && randSmallX !== randMedX + 1 && randSmallY + 1 !== randMedY + 1){
+  //         randNumsOverlapping = false;
+  //       }
+  //     }
+  //   else{
+  //     console.log("error: overlapping ships")
+  //     randSmallX = Math.floor(random(13));
+  //     randLargeX = Math.floor(random(12));
+  //     randSmallY = Math.floor(random(14));
+  //     randLargeY = Math.floor(random(12));
+  //   }
+  // }
+  
   grid[randSmallY+20][randSmallX+5] = "enemy ship here"
   grid[randSmallY+20][randSmallX+6] = "enemy ship here"
   console.log(randSmallY+20,randSmallX+5);
