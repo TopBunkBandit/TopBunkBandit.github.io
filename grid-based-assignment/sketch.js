@@ -6,6 +6,7 @@
 //
 
 let grid;
+let enemyCheckGrid;
 const CELL_SIZE = 20;
 let rows;
 let cols;
@@ -33,7 +34,7 @@ let randLargeX;
 let randSmallY;
 let randMedY;
 let randLargeY;
-let enemyShipsLeft = 2;
+let enemyShipsLeft = 15;
 
 
 function setup() {
@@ -49,6 +50,8 @@ function setup() {
   randLargeY = Math.floor(random(12));
   
   grid = gridGeneration(cols,rows);
+  enemyCheckGrid = gridGeneration(cols,rows);
+
 }
 
 function draw() {
@@ -268,7 +271,7 @@ function snapShipsToGrid(x,y){
 }
 
 function placeAIShips(){
-  // not causing errors but it is compleatly freezing the program randomly
+  // // not causing errors but it is compleatly freezing the program randomly
   // while (randNumsOverlapping){
   // //this is just to make sure there are no overlapping ships
   // //checking for large square
@@ -286,23 +289,27 @@ function placeAIShips(){
   //   }
   // }
   
-  grid[randSmallY+20][randSmallX+5] = "enemy ship here"
-  grid[randSmallY+20][randSmallX+6] = "enemy ship here"
+  enemyCheckGrid[randSmallY+20][randSmallX+5] = "enemy ship here"
+  enemyCheckGrid[randSmallY+20][randSmallX+6] = "enemy ship here"
   console.log(randSmallY+20,randSmallX+5);
 
-  grid[randMedY+20][randMedX+5] = "enemy ship here"
-  grid[randMedY+19][randMedX+5] = "enemy ship here"
-  grid[randMedY+20][randMedX+6] = "enemy ship here"
-  grid[randMedY+19][randMedX+6] = "enemy ship here"
+  enemyCheckGrid[randMedY+20][randMedX+5] = "enemy ship here"
+  enemyCheckGrid[randMedY+19][randMedX+5] = "enemy ship here"
+  enemyCheckGrid[randMedY+20][randMedX+6] = "enemy ship here"
+  enemyCheckGrid[randMedY+19][randMedX+6] = "enemy ship here"
   console.log(randMedY+20,randMedX+5);
 
   
   for (let q = -1; q < 2; q++){
     for (let p = -1; p < 2; p++){
-      grid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
+      enemyCheckGrid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
       console.log(randLargeY+19+q,randLargeX+5+p);
-
     }
+  }
+
+  //reworked thingy
+  if (randLargeX >= randMedX && randLargeX + 2 <= randMedX && randLargeX <= randMedX + 1 && randLargeX + 2 >= randMedX + 1){
+
   }
   aIPlacement = false;
 
