@@ -1,20 +1,15 @@
-// Battleship (maybe)
+// Battleship
 // James Mitchell
 // 10/28/24
-// NEED TO ADD A WAY SO THAT WHEN SETUP PHASE ENDS THE CURRENT SHIP LOCATIONS ARE PUT INTO THE GRID
 //
 // Extra for Experts:
-// none
+//
 
 let grid;
-let attackedGrid;
 const CELL_SIZE = 20;
 let rows;
 let cols;
-let attacked;
 let setUpPhase = true;
-let shipHere;
-let ships;
 let newSmallX = 200;
 let newSmallY = 300;
 let smallSize = CELL_SIZE;
@@ -28,12 +23,30 @@ let calledForSmall = false;
 let calledForMed = false;
 let calledForLarge = false;
 let abcd = true;
+let randNumsOverlapping = true;
+
+//enemy ai specific variables
+let aIPlacement = true;
+let randSmallX;
+let randMedX;
+let randLargeX;
+let randSmallY;
+let randMedY;
+let randLargeY;
+let enemyShipsLeft = 2;
 
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
   rows = windowHeight/CELL_SIZE;
   cols = windowWidth/CELL_SIZE;
+
+  randSmallX = Math.floor(random(13));
+  randMedX = Math.floor(random(14));
+  randLargeX = Math.floor(random(12));
+  randSmallY = Math.floor(random(14));
+  randMedY = Math.floor(random(13));
+  randLargeY = Math.floor(random(12));
   
   grid = gridGeneration(cols,rows);
 }
@@ -55,6 +68,12 @@ function draw() {
       setUpPhase = !setUpPhase;
     }
     placeShips(mouseX, mouseY);
+    if (aIPlacement){
+      placeAIShips();
+    }
+    if (enemyShipsLeft === 0){
+      circle(100,100,100)
+    }
   }
 }
 
@@ -105,20 +124,21 @@ function mousePressed(){
 
   if (!setUpPhase){
     //figure out why it says already fired here when at y = 26+
-    if(x >= 6 && x <= 19){
+    if(x >= 6 && x <= 19 && y >= 21 && y <= 34){
       if (grid[y][x]  === "fog"){
         grid[y][x]  = "missed";
         console.log("missed");
       }
 
-      else if (grid[y][x] === "ship here"){
+      else if (grid[y][x] === "enemy ship here"){
         grid[y][x] = "hit";
         console.log("hit");
+        enemyShipsLeft -= 1
       }
 
       else{
         console.log("alread fired here");
-        console.log(x, y);
+        console.log(y, x);
       }
     }
  }
@@ -192,27 +212,24 @@ function placeShips(x,y){
     while (abcd){
       console.log('yo');
       //works
-      grid[Math.floor(newSmallX/CELL_SIZE)][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
-      grid[Math.floor(newSmallX/CELL_SIZE)+1][Math.floor(newSmallY/CELL_SIZE)] = "ship here";
-
+      grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)+1] = "allied ship here";
+      
       //works
-      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE)] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE) - 1][Math.floor(newMedY/CELL_SIZE)] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE)][Math.floor(newMedY/CELL_SIZE) - 1] = "ship here";
-      grid[Math.floor(newMedX/CELL_SIZE) - 1][Math.floor(newMedY/CELL_SIZE) - 1] = "ship here";
-
+      grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
+      
       //works
       for (let m = -1; m < 2; m++){
         for (let n = -1; n < 2; n++){
-          grid[Math.floor(newLargeX/CELL_SIZE)+m][Math.floor(newLargeY/CELL_SIZE)+n] = "ship here";
+          grid[Math.floor(newLargeY/CELL_SIZE)+n][Math.floor(newLargeX/CELL_SIZE)+m] = "allied ship here";
         }
       }
       abcd = false;
     }
-
   }
-
-
 }
 
 
@@ -248,4 +265,43 @@ function snapShipsToGrid(x,y){
   if (key === "s"){
 
   }
+}
+
+function placeAIShips(){
+  while (randNumsOverlapping){
+  //this is just to make sure there are no overlapping ships
+  //checking for large square
+  if (randLargeX !== randMedX && randLargeY !== randMedY && randLargeX + 2 !== randMedX + 1 && randLargeY + 2 !== randMedY + 1){
+   if (randSmallX !== randMedX && randSmallY !== randMedY && randSmallX !== randMedX + 1 && randSmallY + 1 !== randMedY + 1){
+    randNumsOverlapping = false;
+      }
+    }
+    else{
+      console.log("error: overlapping ships")
+      randSmallX = Math.floor(random(13));
+      randLargeX = Math.floor(random(12));
+      randSmallY = Math.floor(random(14));
+      randLargeY = Math.floor(random(12));
+    }
+  }
+  grid[randSmallY+20][randSmallX+5] = "enemy ship here"
+  grid[randSmallY+20][randSmallX+6] = "enemy ship here"
+  console.log(randSmallY+20,randSmallX+5);
+
+  grid[randMedY+20][randMedX+5] = "enemy ship here"
+  grid[randMedY+19][randMedX+5] = "enemy ship here"
+  grid[randMedY+20][randMedX+6] = "enemy ship here"
+  grid[randMedY+19][randMedX+6] = "enemy ship here"
+  console.log(randMedY+20,randMedX+5);
+
+  
+  for (let q = -1; q < 2; q++){
+    for (let p = -1; p < 2; p++){
+      grid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
+      console.log(randLargeY+19+q,randLargeX+5+p);
+
+    }
+  }
+  aIPlacement = false;
+
 }
