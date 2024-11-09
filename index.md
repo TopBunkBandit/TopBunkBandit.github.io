@@ -13,10 +13,11 @@
 - [Game of Life](game-of-life)
 - [Rectangular Grid Demo](rect-grid)
 - [Grid Based Movement](grid-movement)
+- [platformer](platformer)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
 - [Arrays and Object Notation](array-and-object-assignment)
 - [Grid Based Assignment](grid-based-assignment)
 
-- [testing thing(empty)](final-project-risk)
+<!-- - [testing thing(empty)](final-project-risk) -->
