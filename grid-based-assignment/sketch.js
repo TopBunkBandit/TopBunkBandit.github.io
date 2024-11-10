@@ -35,7 +35,9 @@ let randMedY;
 let randLargeY;
 let randomNumsOverlapping = 0;
 let enemyShipsLeft = 15;
-
+let firstSelection = true;
+let firstSquareX;
+let firstSquareY;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -49,6 +51,8 @@ function setup() {
   randMedY = Math.floor(random(13));
   randLargeY = Math.floor(random(12));
   
+  firstSquareX = Math.floor(random(6,20))
+  firstSquareY = Math.floor(random(3,15))
   grid = gridGeneration(cols,rows);
 }
 
@@ -125,36 +129,6 @@ function displayGrid(){
   }
 }
 
-
-function mousePressed(){
-  let x = Math.floor(mouseX/CELL_SIZE);
-  let y = Math.floor(mouseY/CELL_SIZE);
-
-  //fix or put into function
-  if (turn = "player"){
-    if(x >= 6 && x <= 19 && y >= 21 && y <= 34){
-      if (grid[y][x]  === "fog"){
-        grid[y][x]  = "missed";
-        console.log("missed");
-
-      }
-
-      else if (grid[y][x] === "enemy ship here"){
-        grid[y][x] = "hit";
-        console.log("hit");
-        enemyShipsLeft -= 1
-
-      }
-
-      else{
-        console.log("alread fired here");
-        console.log(y, x);
-      }
-    }
-    turn = "robot"
-  }
-
-}
 
 // pretty colors :)
 // fill(random(100, 255),random(100, 255),random(200, 255));
@@ -328,11 +302,126 @@ function placeAIShips(){
 }
 
 function playerAndRobotTurns(){
-  if(turn = "player"){
-    playerTurn = true;
-  }
-  else{
+  if(mouseIsPressed && turn === "player"){
+    let x = Math.floor(mouseX/CELL_SIZE);
+    let y = Math.floor(mouseY/CELL_SIZE);
 
-  }
+    if(x >= 6 && x <= 19 && y >= 21 && y <= 34){
+      if (grid[y][x]  === "fog"){
+        grid[y][x]  = "missed";
+        console.log("missed");
+      }
+      else if (grid[y][x] === "enemy ship here"){
+        grid[y][x] = "hit";
+        console.log("hit");
+        enemyShipsLeft -= 1;
+      }
+      else{
+        console.log("alread fired here");
+        console.log(y, x);
+      }
+    }
+    turn = "robot" 
+}
+  if (turn === "robot"){
+    currentRobotPointX = firstSquareX
+    currentRobotPointY = firstSquareY
+    //selects a random point to begin the game at
+    if (firstSelection === true){
 
+      if (grid[firstSquareY][firstSquareX] === "allied ship here"){
+        grid[firstSquareY][firstSquareX] = "hit"
+        playerShipsLeft -= 1;
+      }
+      else{
+        grid[firstSquareY][firstSquareX] = "missed"
+      }
+    }
+
+    //selects a point connected to the previous point
+    else{
+      let direction = Math.floor(random(1,9))
+      //up
+      if (direction = 1 && currentRobotPointY-1 > 3 && currentRobotPointY-1 < 16){
+        if (grid[currentRobotPointY-1][currentRobotPointX] === "allied ship here"){
+          grid[currentRobotPointY-1][currentRobotPointX] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY-1][currentRobotPointX] = "missed"
+        }
+      }
+      //up and right
+      else if (direction = 2 && currentRobotPointY-1 > 3 && currentRobotPointY-1 < 16 && currentRobotPointX+1 > 6 && currentRobotPointX+1 < 20){
+        if (grid[currentRobotPointY-1][currentRobotPointX+1] === "allied ship here"){
+          grid[currentRobotPointY-1][currentRobotPointX+1] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY-1][currentRobotPointX+1] = "missed"
+        }
+      }
+      //right
+      else if (direction = 3 && currentRobotPointX+1 > 6 && currentRobotPointX+1 < 20){
+        if (grid[currentRobotPointY][currentRobotPointX+1] === "allied ship here"){
+          grid[currentRobotPointY][currentRobotPointX+1] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY][currentRobotPointX+1] = "missed"
+        }
+      }
+      //down and right
+      else if (direction = 4 && currentRobotPointY+1 > 3 && currentRobotPointY+1 < 16 && currentRobotPointX+1 > 6 && currentRobotPointX+1 < 20){
+        if (grid[currentRobotPointY+1][currentRobotPointX+1] === "allied ship here"){
+          grid[currentRobotPointY+1][currentRobotPointX+1] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY+1][currentRobotPointX+1] = "missed"
+        }
+      }
+      //down
+      else if (direction = 5 && currentRobotPointY+1 > 3 && currentRobotPointY+1 < 16 ){
+        if (grid[currentRobotPointY+1][currentRobotPointX] === "allied ship here"){
+          grid[currentRobotPointY+1][currentRobotPointX] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY+1][currentRobotPointX] = "missed"
+        }
+      }
+      //down and left
+      else if (direction = 6 && currentRobotPointY+1 > 3 && currentRobotPointY+1 < 16 && currentRobotPointX-1 > 6 && currentRobotPointX-1 < 20){
+        if (grid[currentRobotPointY+1][currentRobotPointX-1] === "allied ship here"){
+          grid[currentRobotPointY+1][currentRobotPointX-1] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY][currentRobotPointX] = "missed"
+        }
+      }
+      //left
+      else if (direction = 7 && currentRobotPointX-1 > 6 && currentRobotPointX-1 < 20){
+        if (grid[currentRobotPointY][currentRobotPointX] === "allied ship here"){
+          grid[currentRobotPointY][currentRobotPointX] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY][currentRobotPointX] = "missed"
+        }
+      }
+      //up and left
+      else if (direction = 8){
+        if (grid[currentRobotPointY][currentRobotPointX] === "allied ship here"){
+          grid[currentRobotPointY][currentRobotPointX] = "hit"
+          playerShipsLeft -= 1;
+        }
+        else{
+          grid[currentRobotPointY][currentRobotPointX] = "missed"
+        }
+      }
+      turn = "player"
+    }
+  }
 }
