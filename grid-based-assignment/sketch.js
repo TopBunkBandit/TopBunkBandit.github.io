@@ -24,7 +24,6 @@ let calledForSmall = false;
 let calledForMed = false;
 let calledForLarge = false;
 let abcd = true;
-let randNumsOverlapping = true;
 
 //enemy ai specific variables
 let aIPlacement = true;
@@ -288,6 +287,11 @@ function placeAIShips(){
   //     randLargeY = Math.floor(random(12));
   //   }
   // }
+
+  //maybe
+  // while (enemyShipsLeft < 15){
+
+  // }
   
   enemyCheckGrid[randSmallY+20][randSmallX+5] = "enemy ship here"
   enemyCheckGrid[randSmallY+20][randSmallX+6] = "enemy ship here"
@@ -307,10 +311,5 @@ function placeAIShips(){
     }
   }
 
-  //reworked thingy
-  if (randLargeX >= randMedX && randLargeX + 2 <= randMedX && randLargeX <= randMedX + 1 && randLargeX + 2 >= randMedX + 1){
-
-  }
-  aIPlacement = false;
 
 }
