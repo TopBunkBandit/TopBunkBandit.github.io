@@ -6,7 +6,6 @@
 //
 
 let grid;
-let enemyCheckGrid;
 const CELL_SIZE = 20;
 let rows;
 let cols;
@@ -23,7 +22,8 @@ let largeSize = CELL_SIZE*3;
 let calledForSmall = false;
 let calledForMed = false;
 let calledForLarge = false;
-let abcd = true;
+let abcd = 0;
+let turn = "player"
 
 //enemy ai specific variables
 let aIPlacement = true;
@@ -33,6 +33,7 @@ let randLargeX;
 let randSmallY;
 let randMedY;
 let randLargeY;
+let randomNumsOverlapping = 0;
 let enemyShipsLeft = 15;
 
 
@@ -49,32 +50,37 @@ function setup() {
   randLargeY = Math.floor(random(12));
   
   grid = gridGeneration(cols,rows);
-  enemyCheckGrid = gridGeneration(cols,rows);
-
 }
 
 function draw() {
   
   background(220);
+  textSize(20)
   if (setUpPhase){
     displayGrid();
+    fill("black")
+    text("Please place your ships by dragging them around the grid", 500, 130)
+    text("When you are ready, press S to begin", 500, 160)
     placeShips(mouseX, mouseY);
-    if (key === "q"){
+    if (key === "s"){
       setUpPhase = !setUpPhase;
     }
-    
   }
   else{
     displayGrid();
-    if (key === " "){
-      setUpPhase = !setUpPhase;
-    }
+    fill("black")
+    text("this grid is the enemys grid", 500, 500)
+    text("Click anywhere to make your guess", 500, 530)
+    text("The enemy has the same 3 ships as you, the first to sink them all wins", 500, 560)
     placeShips(mouseX, mouseY);
     if (aIPlacement){
       placeAIShips();
     }
+    else{
+      playerAndRobotTurns();
+    }
     if (enemyShipsLeft === 0){
-      circle(100,100,100)
+      text("VICTORY",500,400)
     }
   }
 }
@@ -119,23 +125,25 @@ function displayGrid(){
   }
 }
 
-//
+
 function mousePressed(){
   let x = Math.floor(mouseX/CELL_SIZE);
   let y = Math.floor(mouseY/CELL_SIZE);
 
-  if (!setUpPhase){
-    //figure out why it says already fired here when at y = 26+
+  //fix or put into function
+  if (turn = "player"){
     if(x >= 6 && x <= 19 && y >= 21 && y <= 34){
       if (grid[y][x]  === "fog"){
         grid[y][x]  = "missed";
         console.log("missed");
+
       }
 
       else if (grid[y][x] === "enemy ship here"){
         grid[y][x] = "hit";
         console.log("hit");
         enemyShipsLeft -= 1
+
       }
 
       else{
@@ -143,15 +151,15 @@ function mousePressed(){
         console.log(y, x);
       }
     }
- }
-}
+    turn = "robot"
+  }
 
+}
 
 // pretty colors :)
 // fill(random(100, 255),random(100, 255),random(200, 255));
 
 //places the ships
-//makes sure that the 'battleships' stay within your grid and snaps to the grid without any part of it leaving the grid
 function placeShips(x,y){
   fill("grey");
   //small ship
@@ -211,7 +219,7 @@ function placeShips(x,y){
     }
   }
   else{
-    while (abcd){
+    while (abcd !== 1){
       console.log('yo');
       //works
       grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)] = "allied ship here";
@@ -229,14 +237,11 @@ function placeShips(x,y){
           grid[Math.floor(newLargeY/CELL_SIZE)+n][Math.floor(newLargeX/CELL_SIZE)+m] = "allied ship here";
         }
       }
-      abcd = false;
+      abcd = 1;
     }
   }
 }
 
-
-//need to check for collisions so that the ships dont overlap
-//add variable that is triggered when ships are all placed to let game start
 function snapShipsToGrid(x,y){
   snapX = Math.floor(x/CELL_SIZE);
   snapY = Math.floor(y/CELL_SIZE);
@@ -270,46 +275,64 @@ function snapShipsToGrid(x,y){
 }
 
 function placeAIShips(){
-  // // not causing errors but it is compleatly freezing the program randomly
-  // while (randNumsOverlapping){
-  // //this is just to make sure there are no overlapping ships
-  // //checking for large square
-  //   if (randLargeX !== randMedX && randLargeY !== randMedY && randLargeX + 2 !== randMedX + 1 && randLargeY + 2 !== randMedY + 1){
-  //     if (randSmallX !== randMedX && randSmallY !== randMedY && randSmallX !== randMedX + 1 && randSmallY + 1 !== randMedY + 1){
-  //         randNumsOverlapping = false;
-  //       }
-  //     }
-  //   else{
-  //     console.log("error: overlapping ships")
-  //     randSmallX = Math.floor(random(13));
-  //     randLargeX = Math.floor(random(12));
-  //     randSmallY = Math.floor(random(14));
-  //     randLargeY = Math.floor(random(12));
-  //   }
-  // }
+  while (randomNumsOverlapping !== 1){
+    grid[randSmallY+20][randSmallX+5] = "enemy ship here"
+    grid[randSmallY+20][randSmallX+6] = "enemy ship here"
+    console.log(randSmallY+20,randSmallX+5);
 
-  //maybe
-  // while (enemyShipsLeft < 15){
+    grid[randMedY+20][randMedX+5] = "enemy ship here"
+    grid[randMedY+19][randMedX+5] = "enemy ship here"
+    grid[randMedY+20][randMedX+6] = "enemy ship here"
+    grid[randMedY+19][randMedX+6] = "enemy ship here"
+    console.log(randMedY+20,randMedX+5);
 
-  // }
-  
-  enemyCheckGrid[randSmallY+20][randSmallX+5] = "enemy ship here"
-  enemyCheckGrid[randSmallY+20][randSmallX+6] = "enemy ship here"
-  console.log(randSmallY+20,randSmallX+5);
-
-  enemyCheckGrid[randMedY+20][randMedX+5] = "enemy ship here"
-  enemyCheckGrid[randMedY+19][randMedX+5] = "enemy ship here"
-  enemyCheckGrid[randMedY+20][randMedX+6] = "enemy ship here"
-  enemyCheckGrid[randMedY+19][randMedX+6] = "enemy ship here"
-  console.log(randMedY+20,randMedX+5);
-
-  
-  for (let q = -1; q < 2; q++){
-    for (let p = -1; p < 2; p++){
-      enemyCheckGrid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
-      console.log(randLargeY+19+q,randLargeX+5+p);
+    
+    for (let q = -1; q < 2; q++){
+      for (let p = -1; p < 2; p++){
+        grid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
+        console.log(randLargeY+19+q,randLargeX+5+p);
+      }
+    }
+    let banana = 0
+    for (let v = 0; v < grid.length - 1; v++){
+      for (let w = -1; w < grid[v].length - 1; w++){
+        if (grid[v][w] === "enemy ship here"){
+          banana += 1
+        }
+      }
+    }
+    
+    if (banana === 15){
+      aIPlacement = false;
+      randomNumsOverlapping += 1
+      console.log("AI grid set up")
+    }
+    else{
+      randSmallX = Math.floor(random(13));
+      randMedX = Math.floor(random(14));
+      randLargeX = Math.floor(random(10));
+      randSmallY = Math.floor(random(14));
+      randMedY = Math.floor(random(13));
+      randLargeY = Math.floor(random(10));
+      banana = 0
+      console.log("overlapped, repeating process")
+      for (let b = 0; b < grid.length; b++){
+        for (let d = -1; d < grid[b].length; d++){
+          grid[b][d] = "fog"
+        }
+      }
     }
   }
 
+
+}
+
+function playerAndRobotTurns(){
+  if(turn = "player"){
+    playerTurn = true;
+  }
+  else{
+
+  }
 
 }
