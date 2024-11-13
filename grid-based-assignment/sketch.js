@@ -307,7 +307,7 @@ function placeAIShips(){
 }
 
 
-function mousePressed(){
+function mouseClicked(){
   selectedSquare = true;
 }
 
@@ -353,6 +353,7 @@ function playerAndRobotTurns(){
           turn = "player";
           lastHitLocationX = robotPickedX;
           lastHitLocationY = robotPickedY;
+          robotHitShip = true;
         }
         else if (grid[robotPickedY][robotPickedX] === "hit" || grid[robotPickedY][robotPickedX] === "missed"){
           console.log("already hit AI");
@@ -361,124 +362,102 @@ function playerAndRobotTurns(){
         robotPickedY = Math.floor(random(2,16));
       }
       else{
+        //idea, check the squares in the order of Right, Down, Left, Up. 
+        //then, if any of them are fog, aim there.
+        //if the selected square was a ship, change the LSH to that and repeat
+
         //begining to search the area where it last hit a ship
-        //im sure this could be done better I just don't know how
-        //maybe put this into its own function and set up an array to rand choose a direction from so it doesnt run into the edges
-        let randomDirection = Math.floor(9);
-        //checks straight up
-        if (randomDirection === 1){
-          if (grid[lastHitLocationY-1][lastHitLocationX] === "fog"){
-            grid[lastHitLocationY-1][lastHitLocationX] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY-1][lastHitLocationX] === "allied ship here"){
-            grid[lastHitLocationY-1][lastHitLocationX] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
-            lastHitLocationX = lastHitLocationX;
-            lastHitLocationY = lastHitLocationY-1;
-          }
-        }
-        //checks up and right
-        if (randomDirection === 2){
-          if (grid[lastHitLocationY-1][lastHitLocationX + 1] === "fog"){
-            grid[lastHitLocationY-1][lastHitLocationX + 1] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY - 1][lastHitLocationX + 1] === "allied ship here"){
-            grid[lastHitLocationY - 1][lastHitLocationX + 1] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
+        if (grid[lastHitLocationY][lastHitLocationX + 1] !== "missed" && grid[lastHitLocationY][lastHitLocationX + 1] !== "hit" && lastHitLocationX + 1 <= 20){
+          if (grid[lastHitLocationY][lastHitLocationX + 1] === "allied ship here"){
+            grid[lastHitLocationY][lastHitLocationX + 1] = "hit";
             lastHitLocationX = lastHitLocationX + 1;
-            lastHitLocationY = lastHitLocationY-1;
+            lastHitLocationY = lastHitLocationY;
+            turn = "player";
+            console.log(lastHitLocationY,lastHitLocationX);
+
+
           }
-        }
-        //checks right
-        if (randomDirection === 3){
-          if (grid[lastHitLocationY][lastHitLocationX + 1] === "fog"){
+          else{
             grid[lastHitLocationY][lastHitLocationX + 1] = "missed";
             turn = "player";
-          }
-          else if(grid[lastHitLocationY][lastHitLocationX + 1] === "allied ship here"){
-            grid[lastHitLocationY][lastHitLocationX + 1] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
-            lastHitLocationX = lastHitLocationX + 1;
-            lastHitLocationY = lastHitLocationY;
+
           }
         }
-        //checks down and right
-        if (randomDirection === 4){
-          if (grid[lastHitLocationY+1][lastHitLocationX+1] === "fog"){
-            grid[lastHitLocationY+1][lastHitLocationX+1] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY+1][lastHitLocationX+1] === "allied ship here"){
-            grid[lastHitLocationY+1][lastHitLocationX+1] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
-            lastHitLocationX = lastHitLocationX+1;
-            lastHitLocationY = lastHitLocationY+1;
-          }
-        }
-        //checks down
-        if (randomDirection === 5){
-          if (grid[lastHitLocationY+1][lastHitLocationX] === "fog"){
-            grid[lastHitLocationY+1][lastHitLocationX] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY+1][lastHitLocationX] === "allied ship here"){
-            grid[lastHitLocationY+1][lastHitLocationX] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
+        //not selecting a grid, look into it you fool
+        else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "missed" && grid[lastHitLocationY - 1][lastHitLocationX] !== "hit" && lastHitLocationY - 1 <= 3){
+          if (grid[lastHitLocationY - 1][lastHitLocationX] === "allied ship here"){
+            grid[lastHitLocationY - 1][lastHitLocationX] = "hit";
             lastHitLocationX = lastHitLocationX;
-            lastHitLocationY = lastHitLocationY+1;
+            lastHitLocationY = lastHitLocationY - 1;
+            turn = "player";
+            console.log(lastHitLocationY,lastHitLocationX);
+            
           }
+          else{
+            grid[lastHitLocationY - 1][lastHitLocationX] = "missed";
+            turn = "player";
+            
+          }
+          
         }
-        //checks down and left
-        if (randomDirection === 6){
-          if (grid[lastHitLocationY+1][lastHitLocationX-1] === "fog"){
-            grid[lastHitLocationY+1][lastHitLocationX-1] = "missed";
+        else if (grid[lastHitLocationY + 1][lastHitLocationX] !== "missed" && grid[lastHitLocationY + 1][lastHitLocationX] !== "hit" && lastHitLocationY + 1 >= 15){
+          if (grid[lastHitLocationY + 1][lastHitLocationX] === "allied ship here"){
+            grid[lastHitLocationY + 1][lastHitLocationX] = "hit";
+            lastHitLocationX = lastHitLocationX;
+            lastHitLocationY = lastHitLocationY + 1;
             turn = "player";
+            console.log(lastHitLocationY,lastHitLocationX);
+            
+            
           }
-          else if(grid[lastHitLocationY+1][lastHitLocationX-1] === "allied ship here"){
-            grid[lastHitLocationY+1][lastHitLocationX-1] = "hit";
-            playerShipsLeft -= 1;
+          else{
+            grid[lastHitLocationY + 1][lastHitLocationX] = "missed";
             turn = "player";
-            lastHitLocationX = lastHitLocationX-1;
-            lastHitLocationY = lastHitLocationY+1;
+            
           }
+          
         }
-        //checks left
-        if (randomDirection === 7){
-          if (grid[lastHitLocationY][lastHitLocationX-1] === "fog"){
-            grid[lastHitLocationY][lastHitLocationX-1] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY][lastHitLocationX-1] === "allied ship here"){
-            grid[lastHitLocationY][lastHitLocationX-1] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
-            lastHitLocationX = lastHitLocationX-1;
+        else if (grid[lastHitLocationY][lastHitLocationX - 1] !== "missed" && grid[lastHitLocationY][lastHitLocationX - 1] !== "hit" && lastHitLocationX - 1 >= 6){
+          if (grid[lastHitLocationY][lastHitLocationX - 1] === "allied ship here"){
+            grid[lastHitLocationY][lastHitLocationX - 1] = "hit";
+            lastHitLocationX = lastHitLocationX - 1;
             lastHitLocationY = lastHitLocationY;
+            turn = "player";
+            console.log(lastHitLocationY,lastHitLocationX);
+
+
           }
+          else{
+            grid[lastHitLocationY][lastHitLocationX - 1] = "missed";
+            turn = "player";
+
+          }
+          
         }
-        //checks up and left
-        if (randomDirection === 8){
-          if (grid[lastHitLocationY+1][lastHitLocationX-1] === "fog"){
-            grid[lastHitLocationY+1][lastHitLocationX-1] = "missed";
-            turn = "player";
-          }
-          else if(grid[lastHitLocationY+1][lastHitLocationX-1] === "allied ship here"){
-            grid[lastHitLocationY+1][lastHitLocationX-1] = "hit";
-            playerShipsLeft -= 1;
-            turn = "player";
-            lastHitLocationX = lastHitLocationX-1;
-            lastHitLocationY = lastHitLocationY+1;
-          }
-        }    
+        else{
+          robotHitShip = false;
+          turn = "player";
+  
+        }
       }
     }
     while(turn === "robot");
   }
 }
+
+
+
+//saved a bit of old code just in case
+// if (randomDirection === 1){
+//   if (grid[lastHitLocationY-1][lastHitLocationX] === "fog"){
+//     grid[lastHitLocationY-1][lastHitLocationX] = "missed";
+//     turn = "player";
+//   }
+//   else if(grid[lastHitLocationY-1][lastHitLocationX] === "allied ship here"){
+//     grid[lastHitLocationY-1][lastHitLocationX] = "hit";
+//     playerShipsLeft -= 1;
+//     turn = "player";
+//     lastHitLocationX = lastHitLocationX;
+//     lastHitLocationY = lastHitLocationY-1;
+//   }
+// }
