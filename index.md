@@ -18,5 +18,3 @@
 - [Interactive Scene](interactive-scene)
 - [Arrays and Object Notation](array-and-object-assignment)
 - [Grid Based Assignment](grid-based-assignment)
-
-- [testing thing(empty)](final-project-risk)
