@@ -10,6 +10,14 @@ const CELL_SIZE = 20;
 let rows;
 let cols;
 let setUpPhase = true;
+let hasPlacedPlayerBoats = 0;
+let turn = "player";
+let playerShipsLeft = 15;
+let selectedSquare = false;
+let gameOver = false;
+let winner;
+
+//variables for your ships
 let newSmallX = 200;
 let newSmallY = 300;
 let smallSize = CELL_SIZE;
@@ -22,10 +30,6 @@ let largeSize = CELL_SIZE*3;
 let calledForSmall = false;
 let calledForMed = false;
 let calledForLarge = false;
-let abcd = 0;
-let turn = "player";
-let playerShipsLeft = 15;
-let selectedSquare = false;
 
 //enemy ai specific variables
 let aIPlacement = true;
@@ -63,7 +67,7 @@ function setup() {
 
 function draw() {
   
-  background(220);
+  background(150,200,255);
   textSize(20);
   if (setUpPhase){
     displayGrid();
@@ -76,25 +80,50 @@ function draw() {
     }
   }
   else{
-    displayGrid();
-    fill("black");
-    text("this grid is the enemys grid", 500, 500);
-    text("Click anywhere to make your guess", 500, 530);
-    text("The enemy has the same 3 ships as you, the first to sink them all wins", 500, 560);
-    placeShips(mouseX, mouseY);
-    if (aIPlacement){
-      placeAIShips();
+    if (!gameOver){
+      displayGrid();
+      fill("black");
+      text("If the enemy is hitting your ships", 500, 400);
+      text("and it is not registering please refresh the page",500,430);
+      text("this grid is the enemys grid", 500, 500);
+      text("Click anywhere to make your guess", 500, 530);
+      text("The enemy has the same 3 ships as you, the first to sink them all wins", 500, 560);
+      placeShips(mouseX, mouseY);
+      if (aIPlacement){
+        placeAIShips();
+      }
+      else{
+        playerAndRobotTurns();
+      }
+      if (enemyShipsLeft === 0){
+        gameOver = true;
+        winner = "player";
+      }
+      if (playerShipsLeft === 0){
+        gameOver = true;
+        winner = "robot";
+      }
     }
     else{
-      playerAndRobotTurns();
-    }
-    if (enemyShipsLeft === 0){
-      text("VICTORY",500,400);
+      if (winner === "player"){
+        fill("black");
+        text("VICTORY",500,400);
+        text("To play again please refresh this page",600,400);
+
+      }
+      else{
+        fill("black");
+        text("DEFEAT",500,400);
+        text("To play again please refresh this page",600,400);
+
+      }
+
     }
   }
 }
 
 
+//generates a screen wide grid so it can be divided into the player and enemy sections later
 function gridGeneration(cols, rows){
   let newGrid = [];
   for (let y = 0; y < rows; y++){
@@ -112,12 +141,12 @@ function displayGrid(){
     for (let x = 0; x < cols; x++){
       //player grid
       if (x > 5 && x < 20 && y > 1 && y < 16){
-        fill("lightblue");
+        fill(150,200,255);
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
       }
       //enemy grid
       if (x > 5 && x < 20 && y > 20 && y < 35 && !setUpPhase){
-        fill("lightblue");
+        fill(150,200,255);
         square(x*CELL_SIZE,y*CELL_SIZE,CELL_SIZE);
       }
       //if you hit a empty square
@@ -135,8 +164,7 @@ function displayGrid(){
 }
 
 
-// pretty colors :)
-// fill(random(100, 255),random(100, 255),random(200, 255));
+
 
 //places the ships
 function placeShips(x,y){
@@ -198,7 +226,7 @@ function placeShips(x,y){
     }
   }
   else{
-    while (abcd !== 1){
+    while (hasPlacedPlayerBoats !== 1){
       console.log('yo');
       //works
       grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)] = "allied ship here";
@@ -216,7 +244,7 @@ function placeShips(x,y){
           grid[Math.floor(newLargeY/CELL_SIZE)+n][Math.floor(newLargeX/CELL_SIZE)+m] = "allied ship here";
         }
       }
-      abcd = 1;
+      hasPlacedPlayerBoats = 1;
     }
   }
 }
@@ -306,12 +334,12 @@ function placeAIShips(){
 
 }
 
-
 function mouseClicked(){
   selectedSquare = true;
 }
 
 function playerAndRobotTurns(){
+  //players turn
   if(selectedSquare && turn === "player"){
     let x = Math.floor(mouseX/CELL_SIZE);
     let y = Math.floor(mouseY/CELL_SIZE);
@@ -339,7 +367,7 @@ function playerAndRobotTurns(){
     }
   }
 
-
+  //robots turn
   else if (turn === "robot"){
     do{
       if (!robotHitShip){
@@ -361,69 +389,62 @@ function playerAndRobotTurns(){
         robotPickedX = Math.floor(random(6,20));
         robotPickedY = Math.floor(random(2,16));
       }
-      else{
-        //idea, check the squares in the order of Right, Down, Left, Up. 
-        //then, if any of them are fog, aim there.
-        //if the selected square was a ship, change the LSH to that and repeat
 
-        //begining to search the area where it last hit a ship
-        if (grid[lastHitLocationY][lastHitLocationX + 1] !== "missed" && grid[lastHitLocationY][lastHitLocationX + 1] !== "hit" && lastHitLocationX + 1 <= 20){
+      //begining to search the area where it last hit a ship
+      else{
+        //checks to the right if that has not yet been tried
+        if (grid[lastHitLocationY][lastHitLocationX + 1] !== "missed" && grid[lastHitLocationY][lastHitLocationX + 1] !== "hit" && lastHitLocationX + 1 < 20){
           if (grid[lastHitLocationY][lastHitLocationX + 1] === "allied ship here"){
             grid[lastHitLocationY][lastHitLocationX + 1] = "hit";
             lastHitLocationX = lastHitLocationX + 1;
             lastHitLocationY = lastHitLocationY;
+            playerShipsLeft -= 1;
             turn = "player";
-            console.log(lastHitLocationY,lastHitLocationX);
-
-
           }
           else{
             grid[lastHitLocationY][lastHitLocationX + 1] = "missed";
             turn = "player";
-
           }
         }
-        //not selecting a grid, look into it you fool
-        else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "missed" && grid[lastHitLocationY - 1][lastHitLocationX] !== "hit" && lastHitLocationY - 1 <= 3){
+        //checks below if that has not yet been tried
+        else if (grid[lastHitLocationY + 1][lastHitLocationX] !== "missed" && lastHitLocationY + 1 < 16 && grid[lastHitLocationY+1][lastHitLocationX] !== "hit"){
+          if (grid[lastHitLocationY + 1][lastHitLocationX] === "allied ship here"){
+            grid[lastHitLocationY + 1][lastHitLocationX] = "hit";
+            lastHitLocationX = lastHitLocationX;
+            lastHitLocationY = lastHitLocationY + 1;
+            turn = "player";
+            playerShipsLeft -= 1;
+            
+          }
+          else if (grid[lastHitLocationY + 1][lastHitLocationX] !== "hit"){
+            grid[lastHitLocationY + 1][lastHitLocationX] = "missed";
+            turn = "player";
+          }
+        }
+        //checks above if that has not yet been tried
+        else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "missed" && lastHitLocationY - 1 > 3 && grid[lastHitLocationY-1][lastHitLocationX] !== "hit"){
           if (grid[lastHitLocationY - 1][lastHitLocationX] === "allied ship here"){
             grid[lastHitLocationY - 1][lastHitLocationX] = "hit";
             lastHitLocationX = lastHitLocationX;
             lastHitLocationY = lastHitLocationY - 1;
             turn = "player";
-            console.log(lastHitLocationY,lastHitLocationX);
-            
+            playerShipsLeft -= 1;
           }
-          else{
+          else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "hit"){
             grid[lastHitLocationY - 1][lastHitLocationX] = "missed";
             turn = "player";
             
           }
           
         }
-        else if (grid[lastHitLocationY + 1][lastHitLocationX] !== "missed" && grid[lastHitLocationY + 1][lastHitLocationX] !== "hit" && lastHitLocationY + 1 >= 15){
-          if (grid[lastHitLocationY + 1][lastHitLocationX] === "allied ship here"){
-            grid[lastHitLocationY + 1][lastHitLocationX] = "hit";
-            lastHitLocationX = lastHitLocationX;
-            lastHitLocationY = lastHitLocationY + 1;
-            turn = "player";
-            console.log(lastHitLocationY,lastHitLocationX);
-            
-            
-          }
-          else{
-            grid[lastHitLocationY + 1][lastHitLocationX] = "missed";
-            turn = "player";
-            
-          }
-          
-        }
+        //checks left if that has not yet been tried
         else if (grid[lastHitLocationY][lastHitLocationX - 1] !== "missed" && grid[lastHitLocationY][lastHitLocationX - 1] !== "hit" && lastHitLocationX - 1 >= 6){
           if (grid[lastHitLocationY][lastHitLocationX - 1] === "allied ship here"){
             grid[lastHitLocationY][lastHitLocationX - 1] = "hit";
             lastHitLocationX = lastHitLocationX - 1;
             lastHitLocationY = lastHitLocationY;
             turn = "player";
-            console.log(lastHitLocationY,lastHitLocationX);
+            playerShipsLeft -= 1;
 
 
           }
@@ -434,10 +455,9 @@ function playerAndRobotTurns(){
           }
           
         }
+        //if all the directions have been tried, it sets the robot back to randomly guessing
         else{
-          robotHitShip = false;
-          turn = "player";
-  
+          robotHitShip = false;  
         }
       }
     }
@@ -448,16 +468,20 @@ function playerAndRobotTurns(){
 
 
 //saved a bit of old code just in case
-// if (randomDirection === 1){
-//   if (grid[lastHitLocationY-1][lastHitLocationX] === "fog"){
-//     grid[lastHitLocationY-1][lastHitLocationX] = "missed";
+//the check for nearby ships portion had to be modified to put this is
+//since it needs the above spot to be hit
+// else if(grid[lastHitLocationY - 1][lastHitLocationX] === "hit" && grid[lastHitLocationY - 2][lastHitLocationX] === "fog" && lastHitLocationY - 2 > 3){
+//   if (grid[lastHitLocationY - 2][lastHitLocationX] === "allied ship here"){
+//     grid[lastHitLocationY - 2][lastHitLocationX] = "hit";
+//     lastHitLocationX = lastHitLocationX;
+//     lastHitLocationY = lastHitLocationY - 2;
 //     turn = "player";
 //   }
-//   else if(grid[lastHitLocationY-1][lastHitLocationX] === "allied ship here"){
-//     grid[lastHitLocationY-1][lastHitLocationX] = "hit";
-//     playerShipsLeft -= 1;
+//   else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "hit"){
+//     grid[lastHitLocationY - 1][lastHitLocationX] = "missed";
 //     turn = "player";
-//     lastHitLocationX = lastHitLocationX;
-//     lastHitLocationY = lastHitLocationY-1;
 //   }
 // }
+
+// pretty colors :)
+// fill(random(100, 255),random(100, 255),random(200, 255));

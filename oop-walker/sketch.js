@@ -35,19 +35,31 @@ class Walker{
   }
 }
 
-let mike;
-let luc;
+let walkerArray = [];
+
 function setup() {
   createCanvas(windowWidth, windowHeight);
-  luc = new Walker(width/2,height/2,"Purple");
-  mike = new Walker(width/2 + 20, height/2 + 50, "gold");
+  background("black");
+  let luce = new Walker(width/2,height/2,"Purple");
+  walkerArray.push(luce);
 }
 
 function draw() {
-  // background(220);
-  luc.display();
-  mike.display();
-  luc.move();
-  mike.move();
+  for (let theWalker of walkerArray){
+    theWalker.display();
+    theWalker.move();
+  }
   
 }
+
+function mousePressed(){
+  let randomColor = color(random(255),random(255),random(255));
+
+  let someWalker = new Walker(mouseX,mouseY,randomColor);
+  walkerArray.push(someWalker);
+}
+
+// let mike;
+// mike = new Walker(width/2 + 20, height/2 + 50, "gold");
+// mike.display();
+// mike.move();
