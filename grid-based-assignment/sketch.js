@@ -61,7 +61,7 @@ function setup() {
   randLargeY = Math.floor(random(12));
   
   robotPickedX = Math.floor(random(6,20));
-  robotPickedY = Math.floor(random(3,15));
+  robotPickedY = Math.floor(random(4,15));
   grid = gridGeneration(cols,rows);
 }
 
