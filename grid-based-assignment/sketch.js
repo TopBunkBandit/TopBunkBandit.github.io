@@ -1,6 +1,9 @@
 // Battleship
 // James Mitchell
 // 10/28/24
+// A small note:
+// I have no idea why the players ships are sometimes being considered empty tiles without ending the game
+// It only happens once every 20 games or so, but it still happens
 // Extra for Experts:
 // 
 
