@@ -292,17 +292,17 @@ function snapShipsToGrid(x,y){
 function placeAIShips(){
   //a simple loop to make sure that the ships are not going to overlap
   while (randomNumsOverlapping !== 1){
-    grid[randSmallY+20][randSmallX+5] = "enemy ship here";
-    grid[randSmallY+20][randSmallX+6] = "enemy ship here";
+    grid[randSmallY+21][randSmallX+6] = "enemy ship here";
+    grid[randSmallY+21][randSmallX+7] = "enemy ship here";
 
-    grid[randMedY+20][randMedX+5] = "enemy ship here";
-    grid[randMedY+21][randMedX+5] = "enemy ship here";
-    grid[randMedY+20][randMedX+6] = "enemy ship here";
     grid[randMedY+21][randMedX+6] = "enemy ship here";
+    grid[randMedY+22][randMedX+6] = "enemy ship here";
+    grid[randMedY+21][randMedX+7] = "enemy ship here";
+    grid[randMedY+22][randMedX+7] = "enemy ship here";
     
     for (let q = -1; q < 2; q++){
       for (let p = -1; p < 2; p++){
-        grid[randLargeY+q + 20][randLargeX + p + 7] = "enemy ship here";
+        grid[randLargeY+q + 22][randLargeX + p + 7] = "enemy ship here";
       }
     }
     let checkIfAllShipsPlaced = 0;
