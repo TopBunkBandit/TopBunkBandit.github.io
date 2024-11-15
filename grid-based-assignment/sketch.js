@@ -1,18 +1,17 @@
 // Battleship
 // James Mitchell
 // 10/28/24
-//
 // Extra for Experts:
-//
+// 
 
 let grid;
 const CELL_SIZE = 20;
 let rows;
 let cols;
 let setUpPhase = true;
-let hasPlacedPlayerBoats = 0;
 let turn = "player";
-let playerShipsLeft = 15;
+let playerShipsLeft = 0;
+let hasPlacedPlayerBoats = 0;
 let selectedSquare = false;
 let gameOver = false;
 let winner;
@@ -53,6 +52,7 @@ function setup() {
   rows = windowHeight/CELL_SIZE;
   cols = windowWidth/CELL_SIZE;
 
+  //defining the enemys ship placements
   randSmallX = Math.floor(random(13));
   randMedX = Math.floor(random(14));
   randLargeX = Math.floor(random(12));
@@ -69,17 +69,19 @@ function draw() {
   
   background(150,200,255);
   textSize(20);
+  //the set up for the game
   if (setUpPhase){
     displayGrid();
     fill("black");
     text("Please place your ships by dragging them around the grid", 500, 130);
     text("When you are ready, press S to begin", 500, 160);
     placeShips(mouseX, mouseY);
-    if (key === "s"){
-      setUpPhase = !setUpPhase;
+    if (keyCode === 83){
+      setUpPhase = false;
     }
   }
   else{
+    //the game
     if (!gameOver){
       displayGrid();
       fill("black");
@@ -89,6 +91,7 @@ function draw() {
       text("Click anywhere to make your guess", 500, 530);
       text("The enemy has the same 3 ships as you, the first to sink them all wins", 500, 560);
       placeShips(mouseX, mouseY);
+
       if (aIPlacement){
         placeAIShips();
       }
@@ -104,6 +107,7 @@ function draw() {
         winner = "robot";
       }
     }
+    //the end of the game
     else{
       if (winner === "player"){
         fill("black");
@@ -121,6 +125,7 @@ function draw() {
     }
   }
 }
+
 
 
 //generates a screen wide grid so it can be divided into the player and enemy sections later
@@ -163,33 +168,32 @@ function displayGrid(){
   }
 }
 
-
-
-
 //places the ships
 function placeShips(x,y){
   fill("grey");
-  //small ship
   if (setUpPhase){
-
+    //updates the ships position if it is in within the grid
+    //small battleship
     if(mouseIsPressed && mouseX >= newSmallX - smallSize && mouseX <= newSmallX + smallSize && mouseY >= newSmallY - smallSize && mouseY <= newSmallY + smallSize){
       if(mouseX/CELL_SIZE > 6 && mouseX/CELL_SIZE < 19 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 16){
         rect(x-smallSize/2,y-smallSize/2,smallSize*2,smallSize);
         newSmallX = x;
         newSmallY = y;
+        //draws the other two ships so they still show when moving the other ships
         square(newMedX - medSize/2 ,newMedY - medSize/2 ,medSize);
         square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
         calledForSmall = true;
         snapShipsToGrid(newSmallX,newSmallY);
       }
       else{
+        //when the mouse is released it will call this and snap the ship to the grid
         calledForSmall = true;
         snapShipsToGrid(newSmallX,newSmallY);
       }
     }
     //medium battleship
     else if(mouseIsPressed && mouseX >= newMedX - medSize/1.5 && mouseX <= newMedX + medSize/1.5 && mouseY >= newMedY - medSize/1.5 && mouseY <= newMedY + medSize/1.5){
-      if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 2 && mouseY/CELL_SIZE < 17){
+      if(mouseX/CELL_SIZE > 7 && mouseX/CELL_SIZE < 20 && mouseY/CELL_SIZE > 3 && mouseY/CELL_SIZE < 16){
         square(x - medSize/2,y - medSize/2,medSize);
         newMedX = x;
         newMedY = y;
@@ -219,29 +223,39 @@ function placeShips(x,y){
         snapShipsToGrid(newLargeX,newLargeY);
       }
     }
+    //draws the ships
     else{
       square(newMedX - medSize/2 ,newMedY - medSize/2, medSize);
       rect(newSmallX-smallSize/2,newSmallY-smallSize/2,smallSize*2,smallSize);
       square(newLargeX-largeSize/2,newLargeY-largeSize/2,largeSize);
     }
   }
+
+  //places the ships into the grid so the AI can hit them
   else{
     while (hasPlacedPlayerBoats !== 1){
-      console.log('yo');
-      //works
+      //small ship
       grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)] = "allied ship here";
       grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)+1] = "allied ship here";
-      
-      //works
+      //medium ship
       grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
       grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
       grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
       grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
       
-      //works
+      //large ship
       for (let m = -1; m < 2; m++){
         for (let n = -1; n < 2; n++){
           grid[Math.floor(newLargeY/CELL_SIZE)+n][Math.floor(newLargeX/CELL_SIZE)+m] = "allied ship here";
+        }
+      }
+
+      //prevents anyone from unable to lose
+      for (let we = 0; we < grid.length; we++){
+        for (let rt = 0; rt < grid.length; rt++){
+          if (grid[we][rt] === "allied ship here"){
+            playerShipsLeft += 1;
+          }
         }
       }
       hasPlacedPlayerBoats = 1;
@@ -249,67 +263,58 @@ function placeShips(x,y){
   }
 }
 
+//a function used for snapping the players ships to the grids that it is on
 function snapShipsToGrid(x,y){
   snapX = Math.floor(x/CELL_SIZE);
   snapY = Math.floor(y/CELL_SIZE);
-  // console.log(snapX);
-  // console.log(snapY);
-  //SMALL WORKS I DONT KNOW WHY, MAYBE BECAUSE ITS THE SAME AS THE MEDIUM
+
   if (calledForSmall){
-    //working code for the main square, need to adjust numbers so that the second square also causes the small ship to not lock in place
-    if(!(newSmallX/CELL_SIZE  + 1 > newMedX/CELL_SIZE && newSmallX/CELL_SIZE  - 1 < newMedX/CELL_SIZE && newSmallY/CELL_SIZE + 1 > newMedY/CELL_SIZE && newSmallY/CELL_SIZE - 1 < newMedY/CELL_SIZE)){
-      newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
-      newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
-      calledForSmall = false;
-    }
+    //snaps the small ship to the grid
+    newSmallX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
+    newSmallY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
+    calledForSmall = false;
   }
-  //MED WORKS BECAUSE ITS 2X2, SO IT DOESNT NEED THE EXTRA CELL TO FIT WELL
+  //snaps the medium ship to the grid
   if (calledForMed){
     newMedX = Math.floor(snapX*CELL_SIZE);
     newMedY = Math.floor(snapY*CELL_SIZE);
     calledForMed= false;
   }
-  //LARGE WORKS BECAUSE ITS 3 CELLS LARGE
+  //snaps the large ship to the grid
   if (calledForLarge){
     newLargeX = Math.floor(snapX*CELL_SIZE + CELL_SIZE/2);
     newLargeY = Math.floor(snapY*CELL_SIZE + CELL_SIZE/2);
     calledForLarge = false;
   }
-
-  if (key === "s"){
-
-  }
 }
 
+//places the enemys ships within a certin grid
 function placeAIShips(){
+  //a simple loop to make sure that the ships are not going to overlap
   while (randomNumsOverlapping !== 1){
     grid[randSmallY+20][randSmallX+5] = "enemy ship here";
     grid[randSmallY+20][randSmallX+6] = "enemy ship here";
-    console.log(randSmallY+20,randSmallX+5);
 
     grid[randMedY+20][randMedX+5] = "enemy ship here";
-    grid[randMedY+19][randMedX+5] = "enemy ship here";
+    grid[randMedY+21][randMedX+5] = "enemy ship here";
     grid[randMedY+20][randMedX+6] = "enemy ship here";
-    grid[randMedY+19][randMedX+6] = "enemy ship here";
-    console.log(randMedY+20,randMedX+5);
-
+    grid[randMedY+21][randMedX+6] = "enemy ship here";
     
     for (let q = -1; q < 2; q++){
       for (let p = -1; p < 2; p++){
-        grid[randLargeY+q + 19][randLargeX + p + 7] = "enemy ship here";
-        console.log(randLargeY+19+q,randLargeX+5+p);
+        grid[randLargeY+q + 20][randLargeX + p + 7] = "enemy ship here";
       }
     }
-    let banana = 0;
+    let checkIfAllShipsPlaced = 0;
     for (let v = 0; v < grid.length - 1; v++){
-      for (let w = -1; w < grid[v].length - 1; w++){
+      for (let w = -1; w < grid.length - 1; w++){
         if (grid[v][w] === "enemy ship here"){
-          banana += 1;
+          checkIfAllShipsPlaced += 1;
         }
       }
     }
     
-    if (banana === 15){
+    if (checkIfAllShipsPlaced === 15){
       aIPlacement = false;
       randomNumsOverlapping += 1;
       console.log("AI grid set up");
@@ -321,7 +326,7 @@ function placeAIShips(){
       randSmallY = Math.floor(random(14));
       randMedY = Math.floor(random(13));
       randLargeY = Math.floor(random(10));
-      banana = 0;
+      checkIfAllShipsPlaced = 0;
       console.log("overlapped, repeating process");
       for (let b = 0; b < grid.length; b++){
         for (let d = -1; d < grid[b].length; d++){
@@ -330,10 +335,9 @@ function placeAIShips(){
       }
     }
   }
-
-
 }
 
+//only used to check if the player has guessed in a spot a single time
 function mouseClicked(){
   selectedSquare = true;
 }
@@ -347,22 +351,14 @@ function playerAndRobotTurns(){
     if(x >= 6 && x <= 19 && y >= 21 && y <= 34){
       if (grid[y][x]  === "fog"){
         grid[y][x]  = "missed";
-        console.log("missed");
         turn = "robot"; 
         selectedSquare = false;
-
       }
       else if (grid[y][x] === "enemy ship here"){
         grid[y][x] = "hit";
-        console.log("hit");
         enemyShipsLeft -= 1;
         turn = "robot"; 
         selectedSquare = false;
-
-      }
-      else{
-        console.log("alread fired here");
-        console.log(y, x);
       }
     }
   }
@@ -384,7 +380,6 @@ function playerAndRobotTurns(){
           robotHitShip = true;
         }
         else if (grid[robotPickedY][robotPickedX] === "hit" || grid[robotPickedY][robotPickedX] === "missed"){
-          console.log("already hit AI");
         }
         robotPickedX = Math.floor(random(6,20));
         robotPickedY = Math.floor(random(2,16));
@@ -464,24 +459,3 @@ function playerAndRobotTurns(){
     while(turn === "robot");
   }
 }
-
-
-
-//saved a bit of old code just in case
-//the check for nearby ships portion had to be modified to put this is
-//since it needs the above spot to be hit
-// else if(grid[lastHitLocationY - 1][lastHitLocationX] === "hit" && grid[lastHitLocationY - 2][lastHitLocationX] === "fog" && lastHitLocationY - 2 > 3){
-//   if (grid[lastHitLocationY - 2][lastHitLocationX] === "allied ship here"){
-//     grid[lastHitLocationY - 2][lastHitLocationX] = "hit";
-//     lastHitLocationX = lastHitLocationX;
-//     lastHitLocationY = lastHitLocationY - 2;
-//     turn = "player";
-//   }
-//   else if (grid[lastHitLocationY - 1][lastHitLocationX] !== "hit"){
-//     grid[lastHitLocationY - 1][lastHitLocationX] = "missed";
-//     turn = "player";
-//   }
-// }
-
-// pretty colors :)
-// fill(random(100, 255),random(100, 255),random(200, 255));
