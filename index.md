@@ -14,6 +14,7 @@
 - [Rectangular Grid Demo](rect-grid)
 - [Grid Based Movement](grid-movement)
 - [OOP Walker Demo](oop-walker)
+- [Fireworks Demo](fireworks)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
