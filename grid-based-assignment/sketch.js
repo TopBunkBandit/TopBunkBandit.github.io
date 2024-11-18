@@ -336,6 +336,20 @@ function placeAIShips(){
           grid[b][d] = "fog";
         }
       }
+      grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newSmallY/CELL_SIZE)][Math.floor(newSmallX/CELL_SIZE)+1] = "allied ship here";
+      //medium ship
+      grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE)] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE)][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
+      grid[Math.floor(newMedY/CELL_SIZE) - 1][Math.floor(newMedX/CELL_SIZE) - 1] = "allied ship here";
+      
+      //large ship
+      for (let m = -1; m < 2; m++){
+        for (let n = -1; n < 2; n++){
+          grid[Math.floor(newLargeY/CELL_SIZE)+n][Math.floor(newLargeX/CELL_SIZE)+m] = "allied ship here";
+        }
+      }
     }
   }
 }
