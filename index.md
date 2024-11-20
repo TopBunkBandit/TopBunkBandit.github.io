@@ -15,6 +15,7 @@
 - [Grid Based Movement](grid-movement)
 - [OOP Walker Demo](oop-walker)
 - [Fireworks Demo](fireworks)
+- [Connected Nodes Demo](node-demo)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
