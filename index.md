@@ -17,6 +17,7 @@
 - [Fireworks Demo](fireworks)
 - [Connected Nodes Demo](node-demo)
 - [Collide 2D](collide)
+- [p5.party testing](p5-testing)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
