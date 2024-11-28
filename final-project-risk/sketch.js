@@ -1,11 +1,1 @@
-//its risk
-//figure it out
-
-
-function setup() {
-  createCanvas(windowWidth, windowHeight);
-}
-
-function draw() {
-  background(220);
-}
+//idk why this is here I deleated it over 5x now
