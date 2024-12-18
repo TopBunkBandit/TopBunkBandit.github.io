@@ -18,6 +18,8 @@
 - [Connected Nodes Demo](node-demo)
 - [Collide 2D](collide)
 - [p5.party testing](p5-testing)
+- [Fractal Circles](fractal-circle)
+- [Fractal Triangle](fractal-triangle)
 
 ## Projects
 - [Interactive Scene](interactive-scene)
